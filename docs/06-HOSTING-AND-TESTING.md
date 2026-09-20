@@ -17,8 +17,10 @@ process that stays up.
 | Will work | Notes |
 |---|---|
 | **Any VPS** — Hetzner, DigitalOcean, Vultr, Linode, or a local Ethiopian provider | Cheapest and fully under your control. ~€4–6/month. This is Option C below |
-| **Render**, **Railway**, **Fly.io**, DigitalOcean App Platform | Run Docker images with a managed Postgres. Convenient, a bit more per month. Avoid free tiers that sleep — a cold Odoo start takes minutes and will happen while the client is watching |
+| **Render**, **Railway**, **Fly.io**, DigitalOcean App Platform | Run Docker images with a managed Postgres. Convenient, a bit more per month. Their **free** tiers give 256–512 MB, which is below the measured 560 MB install peak, so the build dies part way — see [`07-FREE-HOSTING.md`](07-FREE-HOSTING.md) |
 | Your own laptop + a tunnel | Fine for a scheduled demo call. Option A-plus below |
+| **GitHub Codespaces** | Free, no card, public URL in ~15 minutes. The best zero-cost option for a demo — [`07-FREE-HOSTING.md`](07-FREE-HOSTING.md) |
+| **Oracle Cloud Always Free** | A real VM, free permanently. The best zero-cost option for a link that stays up |
 
 Odoo.sh is Odoo's own hosting, but it requires an Enterprise subscription,
 which defeats the zero-licence-fee argument the whole proposal rests on.

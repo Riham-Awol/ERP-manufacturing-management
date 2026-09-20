@@ -27,6 +27,12 @@ smoke test and prints the URL. Add `--fresh` to wipe a previous attempt first.
 To show a client on a call, put it on a public HTTPS URL without provisioning
 anything: `./share.sh`.
 
+**Hosting it free?** Open the repo in a GitHub Codespace, run
+`cd deploy && ./demo-up.sh`, and set port 8069 to Public — a working URL in
+about 15 minutes, no card. For a link that stays up, Oracle Cloud's Always Free
+tier runs it permanently. Both written out step by step in
+[`docs/07-FREE-HOSTING.md`](docs/07-FREE-HOSTING.md).
+
 Getting `Internal Server Error`? Run `./logs.sh` for the real traceback, or
 `./demo-up.sh --fresh` to rebuild from scratch. See
 [`docs/06-HOSTING-AND-TESTING.md`](docs/06-HOSTING-AND-TESTING.md) section 6.
@@ -85,6 +91,7 @@ Hosting it for a client demo, with TLS: **[`docs/06-HOSTING-AND-TESTING.md`](doc
 | [`docs/04-DEMO-SCRIPT.md`](docs/04-DEMO-SCRIPT.md) | A 30-minute demo built around five questions the plant already argues about |
 | [`docs/05-MODULE-REFERENCE.md`](docs/05-MODULE-REFERENCE.md) | Models, key fields, REST endpoints, extension points |
 | [`docs/06-HOSTING-AND-TESTING.md`](docs/06-HOSTING-AND-TESTING.md) | Running it locally, hosting it with TLS, the smoke test, and troubleshooting |
+| [`docs/07-FREE-HOSTING.md`](docs/07-FREE-HOSTING.md) | Hosting it for free: measured requirements, GitHub Codespaces and Oracle Always Free, step by step |
 
 ---
 

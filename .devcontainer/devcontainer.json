@@ -1,0 +1,43 @@
+{
+  "name": "Aifa Agro ERP demo",
+
+  // A plain Ubuntu box. Odoo and PostgreSQL run as containers inside it via
+  // the repo's own docker-compose, so the environment here is identical to a
+  // laptop or a VPS - nothing special to learn and nothing that only works in
+  // Codespaces.
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
+
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "dockerDashComposeVersion": "v2"
+    }
+  },
+
+  // 2 cores / 8 GB. Measured peak for a full module install is about 560 MB
+  // across Odoo and PostgreSQL, so this is comfortable.
+  "hostRequirements": {
+    "cpus": 2,
+    "memory": "8gb",
+    "storage": "32gb"
+  },
+
+  "forwardPorts": [8069],
+  "portsAttributes": {
+    "8069": {
+      "label": "Odoo",
+      "onAutoForward": "notify"
+    }
+  },
+
+  "postCreateCommand": "chmod +x deploy/*.sh && echo 'Ready. Run: cd deploy && ./demo-up.sh'",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "redhat.vscode-xml"
+      ]
+    }
+  }
+}
