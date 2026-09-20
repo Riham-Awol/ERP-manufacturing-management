@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_aifa_ncr_tree" model="ir.ui.view">
+        <field name="name">aifa.ncr.tree</field>
+        <field name="model">aifa.ncr</field>
+        <field name="arch" type="xml">
+            <tree string="Non-Conformance Reports"
+                  decoration-danger="severity == 'critical' and state != 'closed'"
+                  decoration-muted="state in ('closed','cancel')">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="subject_label"/>
+                <field name="control_point_id" optional="show"/>
+                <field name="crop_id" optional="hide"/>
+                <field name="severity" widget="badge" decoration-danger="severity == 'critical'"/>
+                <field name="quantity_affected_kg" sum="kg affected"/>
+                <field name="disposition"/>
+                <field name="capa_owner_id" optional="show"/>
+                <field name="capa_due_date" optional="show"/>
+                <field name="state" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_aifa_ncr_form" model="ir.ui.view">
+        <field name="name">aifa.ncr.form</field>
+        <field name="model">aifa.ncr</field>
+        <field name="arch" type="xml">
+            <form string="Non-Conformance Report">
+                <header>
+                    <button name="action_investigate" type="object" string="Start Investigation"
+                            class="btn-primary" invisible="state != 'open'"/>
+                    <button name="action_agree_disposition" type="object"
+                            string="Agree Disposition" class="btn-primary"
+                            invisible="state not in ('open','investigating')"
+                            groups="aifa_base.group_aifa_qa_manager"/>
+                    <button name="action_close" type="object" string="Close"
+                            invisible="state != 'disposed'"
+                            groups="aifa_base.group_aifa_qa_manager"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('closed','cancel')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="open,investigating,disposed,closed"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Critical" bg_color="text-bg-danger"
+                            invisible="severity != 'critical'"/>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Context">
+                            <field name="date"/>
+                            <field name="raised_by_id"/>
+                            <field name="control_point_id"/>
+                            <field name="crop_id"/>
+                            <field name="severity"/>
+                            <field name="quantity_affected_kg"/>
+                        </group>
+                        <group string="Affected Material">
+                            <field name="subject_label"/>
+                            <field name="intake_batch_id"/>
+                            <field name="dehydration_run_id"/>
+                            <field name="lot_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description &amp; Root Cause" name="desc">
+                            <group>
+                                <field name="description" placeholder="What was found, where and by whom."/>
+                                <field name="root_cause_category"/>
+                                <field name="root_cause"
+                                       placeholder="Five-whys or fishbone conclusion. 'Operator error' is a symptom, not a root cause."/>
+                            </group>
+                        </page>
+                        <page string="Disposition" name="disposition">
+                            <group>
+                                <group>
+                                    <field name="disposition"/>
+                                    <field name="approved_by_id" readonly="1"/>
+                                    <field name="approved_date" readonly="1"/>
+                                </group>
+                            </group>
+                            <field name="disposition_note"
+                                   placeholder="Quantity re-dried, downgrade destination, disposal witness..."/>
+                        </page>
+                        <page string="CAPA" name="capa">
+                            <group>
+                                <group>
+                                    <field name="capa_owner_id"/>
+                                    <field name="capa_due_date"/>
+                                    <field name="capa_done"/>
+                                </group>
+                            </group>
+                            <separator string="Corrective Action (fix this occurrence)"/>
+                            <field name="corrective_action"/>
+                            <separator string="Preventive Action (stop it recurring)"/>
+                            <field name="preventive_action"/>
+                        </page>
+                        <page string="Triggering Checks" name="checks">
+                            <field name="check_ids" readonly="1">
+                                <tree>
+                                    <field name="date"/>
+                                    <field name="name"/>
+                                    <field name="control_point_id"/>
+                                    <field name="value_numeric"/>
+                                    <field name="limit_max"/>
+                                    <field name="result" widget="badge"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_aifa_ncr" model="ir.actions.act_window">
+        <field name="name">Non-Conformance Reports</field>
+        <field name="res_model">aifa.ncr</field>
+        <field name="view_mode">tree,form,pivot</field>
+    </record>
+
+    <record id="view_aifa_ncr_pivot" model="ir.ui.view">
+        <field name="name">aifa.ncr.pivot</field>
+        <field name="model">aifa.ncr</field>
+        <field name="arch" type="xml">
+            <pivot string="NCR Analysis" sample="1">
+                <field name="root_cause_category" type="row"/>
+                <field name="severity" type="col"/>
+                <field name="quantity_affected_kg" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+</odoo>

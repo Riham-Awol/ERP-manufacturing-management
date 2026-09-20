@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="option_conforming" model="aifa.control.option">
+            <field name="name">Conforming</field>
+            <field name="sequence">10</field>
+            <field name="is_conforming" eval="True"/>
+        </record>
+        <record id="option_minor_defect" model="aifa.control.option">
+            <field name="name">Minor Defect - accept with note</field>
+            <field name="sequence">20</field>
+            <field name="is_conforming" eval="True"/>
+        </record>
+        <record id="option_major_defect" model="aifa.control.option">
+            <field name="name">Major Defect - reject</field>
+            <field name="sequence">30</field>
+            <field name="is_conforming" eval="False"/>
+        </record>
+
+        <!-- ============ Intake ============ -->
+        <record id="cp_intake_brix" model="aifa.control.point">
+            <field name="name">Incoming Fruit Brix</field>
+            <field name="code">QA-01</field>
+            <field name="sequence">10</field>
+            <field name="stage">intake</field>
+            <field name="point_type">qa</field>
+            <field name="hazard">quality</field>
+            <field name="result_type">numeric</field>
+            <field name="uom_label">degrees Brix</field>
+            <field name="limit_min">10.0</field>
+            <field name="limit_max">25.0</field>
+            <field name="is_blocking" eval="False"/>
+            <field name="frequency">every</field>
+            <field name="sample_size">3</field>
+            <field name="method">Digital refractometer, three fruit per consignment taken from different crates. Calibrate against distilled water at the start of each shift.</field>
+            <field name="corrective_action">Below the minimum, downgrade the consignment to Grade B and re-price. Brix drives dried-fruit sweetness and therefore the whole sensory profile.</field>
+        </record>
+
+        <record id="cp_intake_decay" model="aifa.control.point">
+            <field name="name">Visual Decay &amp; Foreign Matter</field>
+            <field name="code">OPRP-01</field>
+            <field name="sequence">20</field>
+            <field name="stage">intake</field>
+            <field name="point_type">oprp</field>
+            <field name="hazard">biological</field>
+            <field name="result_type">numeric</field>
+            <field name="uom_label">% of consignment</field>
+            <field name="limit_max">10.0</field>
+            <field name="is_blocking" eval="True"/>
+            <field name="frequency">every</field>
+            <field name="method">Visual assessment of a 20 kg sample drawn across at least three crates.</field>
+            <field name="corrective_action">Above 10%, sort out the affected fruit and re-weigh, or reject the consignment. Mouldy fruit entering the wash tank contaminates the whole batch.</field>
+            <field name="legal_reference">EFDA sanitary handling directive; Codex CAC/RCP 1-1969 General Principles of Food Hygiene</field>
+        </record>
+
+        <!-- ============ Preparation ============ -->
+        <record id="cp_wash_sanitiser" model="aifa.control.point">
+            <field name="name">Wash Water Free Chlorine</field>
+            <field name="code">CCP-1</field>
+            <field name="sequence">30</field>
+            <field name="stage">prep</field>
+            <field name="point_type">ccp</field>
+            <field name="hazard">biological</field>
+            <field name="result_type">numeric</field>
+            <field name="uom_label">ppm free chlorine</field>
+            <field name="limit_min">50.0</field>
+            <field name="limit_max">200.0</field>
+            <field name="is_blocking" eval="True"/>
+            <field name="frequency">shift</field>
+            <field name="sample_size">2</field>
+            <field name="method">Test strip or colorimeter reading of the wash tank at the start of the shift and after each water change. Record pH alongside: chlorine is ineffective above pH 7.5.</field>
+            <field name="corrective_action">Below 50 ppm, stop the line, dose the tank and re-test before restarting. Fruit washed during the deviation is held for assessment.</field>
+            <field name="legal_reference">Codex CAC/RCP 53-2003 (fresh fruits and vegetables)</field>
+        </record>
+
+        <!-- ============ Dehydration / release ============ -->
+        <record id="cp_dry_temp" model="aifa.control.point">
+            <field name="name">Drying Chamber Temperature Profile</field>
+            <field name="code">OPRP-02</field>
+            <field name="sequence">40</field>
+            <field name="stage">dry</field>
+            <field name="point_type">oprp</field>
+            <field name="hazard">quality</field>
+            <field name="result_type">numeric</field>
+            <field name="uom_label">deg C average</field>
+            <field name="limit_min">50.0</field>
+            <field name="limit_max">70.0</field>
+            <field name="is_blocking" eval="False"/>
+            <field name="frequency">every</field>
+            <field name="method">Calibrated data logger placed in the chamber centre and on the last trolley; average of the steady-state period.</field>
+            <field name="corrective_action">Above the band the fruit case-hardens and darkens; below it the drying time extends and microbial growth risk rises. Investigate the heater and damper settings.</field>
+        </record>
+
+        <record id="cp_moisture" model="aifa.control.point">
+            <field name="name">Residual Moisture after Drying</field>
+            <field name="code">CCP-2</field>
+            <field name="sequence">50</field>
+            <field name="stage">condition</field>
+            <field name="point_type">ccp</field>
+            <field name="hazard">biological</field>
+            <field name="result_type">numeric</field>
+            <field name="uom_label">% moisture</field>
+            <field name="limit_max">15.0</field>
+            <field name="use_crop_moisture_limit" eval="True"/>
+            <field name="is_blocking" eval="True"/>
+            <field name="frequency">every</field>
+            <field name="sample_size">3</field>
+            <field name="method">Moisture balance at 105 deg C to constant weight, three samples drawn from the top, centre and bottom of the load.</field>
+            <field name="corrective_action">Over the limit, quarantine the load and re-dry. Never release on a single sample: fibrous cultivars scatter widely across a trolley.</field>
+            <field name="legal_reference">Codex STAN 130-1981 (dried apricots) applied by analogy; EFDA product registration dossier</field>
+        </record>
+
+        <record id="cp_water_activity" model="aifa.control.point">
+            <field name="name">Water Activity after Conditioning</field>
+            <field name="code">CCP-3</field>
+            <field name="sequence">60</field>
+            <field name="stage">condition</field>
+            <field name="point_type">ccp</field>
+            <field name="hazard">biological</field>
+            <field name="result_type">numeric</field>
+            <field name="uom_label">aw</field>
+            <field name="limit_min">0.35</field>
+            <field name="limit_max">0.60</field>
+            <field name="use_crop_aw_limit" eval="True"/>
+            <field name="is_blocking" eval="True"/>
+            <field name="frequency">every</field>
+            <field name="sample_size">2</field>
+            <field name="method">Water activity meter at 25 deg C on equilibrated samples taken after at least 12 hours of conditioning.</field>
+            <field name="corrective_action">Above 0.60, mould and osmophilic yeast can grow within shelf life: quarantine and re-dry. Below 0.35 the product is brittle and off-brand, so this point has a floor as well as a ceiling.</field>
+            <field name="legal_reference">ICMSF water activity limits for shelf-stable intermediate-moisture foods</field>
+        </record>
+
+        <!-- ============ Packing ============ -->
+        <record id="cp_metal_detect" model="aifa.control.point">
+            <field name="name">Metal Detection / Sieving before Fill</field>
+            <field name="code">CCP-4</field>
+            <field name="sequence">70</field>
+            <field name="stage">pack</field>
+            <field name="point_type">ccp</field>
+            <field name="hazard">physical</field>
+            <field name="result_type">boolean</field>
+            <field name="expected_bool" eval="True"/>
+            <field name="is_blocking" eval="True"/>
+            <field name="frequency">shift</field>
+            <field name="method">Pass the ferrous, non-ferrous and stainless test pieces through the detector at the start, middle and end of every run.</field>
+            <field name="corrective_action">On a failed test piece, quarantine everything packed since the last successful test and re-run it through the detector.</field>
+        </record>
+
+        <record id="cp_seal_integrity" model="aifa.control.point">
+            <field name="name">Pouch Seal Integrity</field>
+            <field name="code">OPRP-03</field>
+            <field name="sequence">80</field>
+            <field name="stage">pack</field>
+            <field name="point_type">oprp</field>
+            <field name="hazard">quality</field>
+            <field name="result_type">option</field>
+            <field name="option_ids" eval="[(6, 0, [ref('option_conforming'), ref('option_minor_defect'), ref('option_major_defect')])]"/>
+            <field name="is_blocking" eval="True"/>
+            <field name="frequency">sample</field>
+            <field name="sample_size">5</field>
+            <field name="method">Squeeze test plus dye penetration on one pouch per 30 minutes of running.</field>
+            <field name="corrective_action">A leaking seal defeats the oxygen absorber and the barrier foil, so the 12-month shelf life no longer holds. Stop, re-set the jaw temperature and re-test.</field>
+        </record>
+
+        <record id="cp_label_check" model="aifa.control.point">
+            <field name="name">Label, Lot Code and Expiry Verification</field>
+            <field name="code">OPRP-04</field>
+            <field name="sequence">90</field>
+            <field name="stage">pack</field>
+            <field name="point_type">oprp</field>
+            <field name="hazard">allergen</field>
+            <field name="result_type">boolean</field>
+            <field name="expected_bool" eval="True"/>
+            <field name="is_blocking" eval="True"/>
+            <field name="frequency">every</field>
+            <field name="method">Scan the printed QR and GS1-128 and confirm the decoded lot, manufacture date and expiry match the production order.</field>
+            <field name="corrective_action">A wrong lot code destroys traceability for the whole run. Re-label before the pallet leaves the packing room.</field>
+        </record>
+
+    </data>
+</odoo>

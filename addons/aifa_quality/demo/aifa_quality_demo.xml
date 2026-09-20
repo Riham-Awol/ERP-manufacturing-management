@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Passing moisture check on the released pineapple run -->
+    <record id="check_pine_moisture" model="aifa.quality.check">
+        <field name="control_point_id" ref="cp_moisture"/>
+        <field name="crop_id" ref="aifa_base.crop_pineapple"/>
+        <field name="dehydration_run_id" ref="aifa_processing.run_pine_1"/>
+        <field name="date" eval="(DateTime.now() - relativedelta(days=4, hours=9)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="value_numeric">13.1</field>
+        <field name="sample_ref">MB-01 / 3 samples</field>
+        <field name="state">done</field>
+    </record>
+    <record id="check_pine_aw" model="aifa.quality.check">
+        <field name="control_point_id" ref="cp_water_activity"/>
+        <field name="crop_id" ref="aifa_base.crop_pineapple"/>
+        <field name="dehydration_run_id" ref="aifa_processing.run_pine_1"/>
+        <field name="date" eval="(DateTime.now() - relativedelta(days=4, hours=8)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="value_numeric">0.57</field>
+        <field name="sample_ref">AW-METER-02</field>
+        <field name="state">done</field>
+    </record>
+
+    <!-- Failing checks that put the mango run into quarantine -->
+    <record id="check_mango_moisture" model="aifa.quality.check">
+        <field name="control_point_id" ref="cp_moisture"/>
+        <field name="crop_id" ref="aifa_base.crop_mango"/>
+        <field name="dehydration_run_id" ref="aifa_processing.run_mango_1"/>
+        <field name="date" eval="(DateTime.now() - relativedelta(days=2, hours=8)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="value_numeric">17.4</field>
+        <field name="sample_ref">MB-01 / 3 samples</field>
+        <field name="note">Top trolley 15.8%, centre 17.1%, last trolley 19.3% - the spread itself is the signal.</field>
+        <field name="state">done</field>
+    </record>
+    <record id="check_mango_aw" model="aifa.quality.check">
+        <field name="control_point_id" ref="cp_water_activity"/>
+        <field name="crop_id" ref="aifa_base.crop_mango"/>
+        <field name="dehydration_run_id" ref="aifa_processing.run_mango_1"/>
+        <field name="date" eval="(DateTime.now() - relativedelta(days=2, hours=7)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="value_numeric">0.68</field>
+        <field name="state">done</field>
+    </record>
+
+    <!-- Wash tank CCP on the prep shift -->
+    <record id="check_wash_pine" model="aifa.quality.check">
+        <field name="control_point_id" ref="cp_wash_sanitiser"/>
+        <field name="crop_id" ref="aifa_base.crop_pineapple"/>
+        <field name="prep_log_id" ref="aifa_processing.prep_log_pine_1"/>
+        <field name="date" eval="(DateTime.now() - relativedelta(days=5, hours=3)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="value_numeric">120.0</field>
+        <field name="state">done</field>
+    </record>
+
+    <!-- The NCR raised against the quarantined mango run -->
+    <record id="ncr_mango_underdry" model="aifa.ncr">
+        <field name="date" eval="(DateTime.now() - relativedelta(days=2, hours=6)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="control_point_id" ref="cp_water_activity"/>
+        <field name="crop_id" ref="aifa_base.crop_mango"/>
+        <field name="subject_label">LOT-DRY-MANG-DEMO-00002</field>
+        <field name="dehydration_run_id" ref="aifa_processing.run_mango_1"/>
+        <field name="severity">critical</field>
+        <field name="quantity_affected_kg">101.2</field>
+        <field name="description">Mango load out of TD-02 measured 17.4% residual moisture and 0.68 aw against limits of 15.0% and 0.60. Both critical limits breached, so the load was quarantined automatically and cannot be drawn on by packing.</field>
+        <field name="root_cause_category">environment</field>
+        <field name="root_cause">Chamber loaded to 100% of its rated wet capacity during a night of 61% ambient relative humidity. The exhaust damper could not shed the moisture load, so the last two trolleys never left the constant-rate drying period.</field>
+        <field name="disposition">redry</field>
+        <field name="disposition_note">Re-dry the whole load at 60 deg C for a further 4 hours, sample three trolleys rather than one, and re-test both moisture and aw before release.</field>
+        <field name="corrective_action">Re-dry and re-test the affected load.</field>
+        <field name="preventive_action">Cap the wet load at 85% of rated capacity when ambient RH exceeds 55%, and add an ambient RH reading to the pre-load checklist. Rotate trolleys at the 6-hour mark on TD-02 as already done on TD-01.</field>
+        <field name="capa_due_date" eval="(DateTime.today() + relativedelta(days=14)).strftime('%Y-%m-%d')"/>
+        <field name="state">investigating</field>
+    </record>
+
+    <!-- Sanitation logs -->
+    <record id="sanitation_prep_1" model="aifa.sanitation.log">
+        <field name="date" eval="(DateTime.now() - relativedelta(days=5, hours=4)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="area">prep</field>
+        <field name="shift">pre</field>
+        <field name="method">wet</field>
+        <field name="chemical">Sodium hypochlorite</field>
+        <field name="concentration_ppm">200.0</field>
+        <field name="contact_minutes">10.0</field>
+        <field name="water_temp_c">45.0</field>
+        <field name="visual_pass" eval="True"/>
+        <field name="atp_swab_taken" eval="True"/>
+        <field name="atp_rlu">14.0</field>
+        <field name="state">signed</field>
+    </record>
+    <record id="sanitation_dryer_1" model="aifa.sanitation.log">
+        <field name="date" eval="(DateTime.now() - relativedelta(days=5, hours=5)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="area">dryer</field>
+        <field name="dehydrator_id" ref="aifa_processing.dryer_td01"/>
+        <field name="shift">pre</field>
+        <field name="method">dry</field>
+        <field name="visual_pass" eval="True"/>
+        <field name="state">signed</field>
+    </record>
+
+    <!-- Check-weighing session on the 100 g pineapple pouch -->
+    <record id="cw_pine_100" model="aifa.checkweigh.session">
+        <field name="date" eval="(DateTime.now() - relativedelta(days=1, hours=5)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="product_id" ref="aifa_base.product_fg_pine_100"/>
+        <field name="nominal_weight_g">100.0</field>
+        <field name="target_fill_g">102.0</field>
+        <field name="scale_serial">BENCH-01</field>
+    </record>
+    <record id="cw_pine_100_s1" model="aifa.checkweigh.sample">
+        <field name="session_id" ref="cw_pine_100"/><field name="weight_g">102.4</field></record>
+    <record id="cw_pine_100_s2" model="aifa.checkweigh.sample">
+        <field name="session_id" ref="cw_pine_100"/><field name="weight_g">101.8</field></record>
+    <record id="cw_pine_100_s3" model="aifa.checkweigh.sample">
+        <field name="session_id" ref="cw_pine_100"/><field name="weight_g">103.1</field></record>
+    <record id="cw_pine_100_s4" model="aifa.checkweigh.sample">
+        <field name="session_id" ref="cw_pine_100"/><field name="weight_g">100.9</field></record>
+    <record id="cw_pine_100_s5" model="aifa.checkweigh.sample">
+        <field name="session_id" ref="cw_pine_100"/><field name="weight_g">102.0</field></record>
+    <record id="cw_pine_100_s6" model="aifa.checkweigh.sample">
+        <field name="session_id" ref="cw_pine_100"/><field name="weight_g">99.6</field></record>
+    <record id="cw_pine_100_s7" model="aifa.checkweigh.sample">
+        <field name="session_id" ref="cw_pine_100"/><field name="weight_g">102.7</field></record>
+    <record id="cw_pine_100_s8" model="aifa.checkweigh.sample">
+        <field name="session_id" ref="cw_pine_100"/><field name="weight_g">101.5</field></record>
+    <record id="cw_pine_100_s9" model="aifa.checkweigh.sample">
+        <field name="session_id" ref="cw_pine_100"/><field name="weight_g">103.4</field></record>
+    <record id="cw_pine_100_s10" model="aifa.checkweigh.sample">
+        <field name="session_id" ref="cw_pine_100"/><field name="weight_g">102.2</field></record>
+
+    <!-- A 35 g session that needs the filler tuned -->
+    <record id="cw_mango_35" model="aifa.checkweigh.session">
+        <field name="date" eval="(DateTime.now() - relativedelta(hours=6)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="product_id" ref="aifa_base.product_fg_mango_35"/>
+        <field name="nominal_weight_g">35.0</field>
+        <field name="target_fill_g">36.0</field>
+        <field name="scale_serial">BENCH-02</field>
+    </record>
+    <record id="cw_mango_35_s1" model="aifa.checkweigh.sample">
+        <field name="session_id" ref="cw_mango_35"/><field name="weight_g">35.4</field></record>
+    <record id="cw_mango_35_s2" model="aifa.checkweigh.sample">
+        <field name="session_id" ref="cw_mango_35"/><field name="weight_g">33.9</field></record>
+    <record id="cw_mango_35_s3" model="aifa.checkweigh.sample">
+        <field name="session_id" ref="cw_mango_35"/><field name="weight_g">36.8</field></record>
+    <record id="cw_mango_35_s4" model="aifa.checkweigh.sample">
+        <field name="session_id" ref="cw_mango_35"/><field name="weight_g">34.2</field></record>
+    <record id="cw_mango_35_s5" model="aifa.checkweigh.sample">
+        <field name="session_id" ref="cw_mango_35"/><field name="weight_g">37.1</field></record>
+    <record id="cw_mango_35_s6" model="aifa.checkweigh.sample">
+        <field name="session_id" ref="cw_mango_35"/><field name="weight_g">35.9</field></record>
+    <record id="cw_mango_35_s7" model="aifa.checkweigh.sample">
+        <field name="session_id" ref="cw_mango_35"/><field name="weight_g">33.6</field></record>
+    <record id="cw_mango_35_s8" model="aifa.checkweigh.sample">
+        <field name="session_id" ref="cw_mango_35"/><field name="weight_g">36.4</field></record>
+
+</odoo>

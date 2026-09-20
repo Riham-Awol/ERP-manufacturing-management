@@ -1,0 +1,26 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_cp_user,aifa.control.point user,model_aifa_control_point,base.group_user,1,0,0,0
+access_cp_qa,aifa.control.point qa,model_aifa_control_point,aifa_base.group_aifa_qa_manager,1,1,1,0
+access_cp_manager,aifa.control.point manager,model_aifa_control_point,aifa_base.group_aifa_manager,1,1,1,1
+access_copt_user,aifa.control.option user,model_aifa_control_option,base.group_user,1,0,0,0
+access_copt_qa,aifa.control.option qa,model_aifa_control_option,aifa_base.group_aifa_qa_manager,1,1,1,1
+access_check_receiving,aifa.quality.check receiving,model_aifa_quality_check,aifa_base.group_aifa_receiving,1,1,1,0
+access_check_operator,aifa.quality.check operator,model_aifa_quality_check,aifa_base.group_aifa_operator,1,1,1,0
+access_check_qa,aifa.quality.check qa,model_aifa_quality_check,aifa_base.group_aifa_qa_manager,1,1,1,0
+access_check_user,aifa.quality.check user,model_aifa_quality_check,base.group_user,1,0,0,0
+access_check_manager,aifa.quality.check manager,model_aifa_quality_check,aifa_base.group_aifa_manager,1,1,1,1
+access_ncr_operator,aifa.ncr operator,model_aifa_ncr,aifa_base.group_aifa_operator,1,0,0,0
+access_ncr_qa,aifa.ncr qa,model_aifa_ncr,aifa_base.group_aifa_qa_manager,1,1,1,0
+access_ncr_user,aifa.ncr user,model_aifa_ncr,base.group_user,1,0,0,0
+access_ncr_manager,aifa.ncr manager,model_aifa_ncr,aifa_base.group_aifa_manager,1,1,1,1
+access_cw_packaging,aifa.checkweigh.session packaging,model_aifa_checkweigh_session,aifa_base.group_aifa_packaging_lead,1,1,1,0
+access_cw_qa,aifa.checkweigh.session qa,model_aifa_checkweigh_session,aifa_base.group_aifa_qa_manager,1,1,1,0
+access_cw_user,aifa.checkweigh.session user,model_aifa_checkweigh_session,base.group_user,1,0,0,0
+access_cw_manager,aifa.checkweigh.session manager,model_aifa_checkweigh_session,aifa_base.group_aifa_manager,1,1,1,1
+access_cws_packaging,aifa.checkweigh.sample packaging,model_aifa_checkweigh_sample,aifa_base.group_aifa_packaging_lead,1,1,1,1
+access_cws_qa,aifa.checkweigh.sample qa,model_aifa_checkweigh_sample,aifa_base.group_aifa_qa_manager,1,1,1,1
+access_cws_user,aifa.checkweigh.sample user,model_aifa_checkweigh_sample,base.group_user,1,0,0,0
+access_san_operator,aifa.sanitation.log operator,model_aifa_sanitation_log,aifa_base.group_aifa_operator,1,1,1,0
+access_san_qa,aifa.sanitation.log qa,model_aifa_sanitation_log,aifa_base.group_aifa_qa_manager,1,1,1,0
+access_san_user,aifa.sanitation.log user,model_aifa_sanitation_log,base.group_user,1,0,0,0
+access_san_manager,aifa.sanitation.log manager,model_aifa_sanitation_log,aifa_base.group_aifa_manager,1,1,1,1

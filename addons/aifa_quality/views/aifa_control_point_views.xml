@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_aifa_control_point_tree" model="ir.ui.view">
+        <field name="name">aifa.control.point.tree</field>
+        <field name="model">aifa.control.point</field>
+        <field name="arch" type="xml">
+            <tree string="Control Points" decoration-danger="point_type == 'ccp'">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="stage"/>
+                <field name="point_type" widget="badge" decoration-danger="point_type == 'ccp'"/>
+                <field name="hazard" optional="show"/>
+                <field name="result_type"/>
+                <field name="limit_min" optional="show"/>
+                <field name="limit_max" optional="show"/>
+                <field name="uom_label" optional="show"/>
+                <field name="frequency"/>
+                <field name="is_blocking" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_aifa_control_point_form" model="ir.ui.view">
+        <field name="name">aifa.control.point.form</field>
+        <field name="model">aifa.control.point</field>
+        <field name="arch" type="xml">
+            <form string="Control Point">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                        <h3><field name="code" placeholder="CCP-2"/></h3>
+                    </div>
+                    <group>
+                        <group string="Classification">
+                            <field name="stage"/>
+                            <field name="point_type"/>
+                            <field name="hazard"/>
+                            <field name="crop_ids" widget="many2many_tags"/>
+                            <field name="responsible_group_id"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group string="Monitoring">
+                            <field name="frequency"/>
+                            <field name="sample_size"/>
+                            <field name="is_blocking"/>
+                            <field name="legal_reference"/>
+                        </group>
+                    </group>
+                    <group string="Critical Limits">
+                        <group>
+                            <field name="result_type"/>
+                            <field name="uom_label" invisible="result_type != 'numeric'"/>
+                            <field name="limit_min" invisible="result_type != 'numeric'"/>
+                            <field name="limit_max" invisible="result_type != 'numeric'"/>
+                        </group>
+                        <group>
+                            <field name="use_crop_moisture_limit" invisible="result_type != 'numeric'"/>
+                            <field name="use_crop_aw_limit" invisible="result_type != 'numeric'"/>
+                            <field name="expected_bool" invisible="result_type != 'boolean'"/>
+                            <field name="option_ids" widget="many2many_tags"
+                                   invisible="result_type != 'option'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Method" name="method">
+                            <field name="method" placeholder="Instrument, calibration, how the sample is drawn..."/>
+                        </page>
+                        <page string="Corrective Action" name="corrective">
+                            <field name="corrective_action"
+                                   placeholder="What the operator must do when the limit is breached."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_aifa_control_point" model="ir.actions.act_window">
+        <field name="name">Control Points (HACCP Plan)</field>
+        <field name="res_model">aifa.control.point</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Define a control point</p>
+            <p>Each CCP and OPRP in the HACCP plan becomes a record here with its
+               critical limits, monitoring frequency and standing corrective
+               action. Checks recorded against a blocking point quarantine the
+               lot automatically.</p>
+        </field>
+    </record>
+
+    <record id="view_aifa_control_option_tree" model="ir.ui.view">
+        <field name="name">aifa.control.option.tree</field>
+        <field name="model">aifa.control.option</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="is_conforming"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_aifa_control_option" model="ir.actions.act_window">
+        <field name="name">Check Options</field>
+        <field name="res_model">aifa.control.option</field>
+        <field name="view_mode">tree</field>
+    </record>
+</odoo>

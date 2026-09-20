@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_aifa_recall_tree" model="ir.ui.view">
+        <field name="name">aifa.recall.tree</field>
+        <field name="model">aifa.recall</field>
+        <field name="arch" type="xml">
+            <tree string="Recalls &amp; Drills" decoration-danger="not is_drill and state != 'closed'">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="is_drill"/>
+                <field name="reason"/>
+                <field name="affected_lot_count"/>
+                <field name="customer_count"/>
+                <field name="total_units" sum="Units"/>
+                <field name="trace_seconds"/>
+                <field name="state" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_aifa_recall_form" model="ir.ui.view">
+        <field name="name">aifa.recall.form</field>
+        <field name="model">aifa.recall</field>
+        <field name="arch" type="xml">
+            <form string="Recall">
+                <header>
+                    <button name="action_run_trace" type="object" string="Run Trace"
+                            class="btn-primary" invisible="state not in ('draft','traced')"/>
+                    <button name="action_quarantine_affected" type="object"
+                            string="Quarantine Affected Lots" class="btn-danger"
+                            invisible="state == 'draft'"
+                            groups="aifa_base.group_aifa_qa_manager"/>
+                    <button name="action_notify_customers" type="object"
+                            string="Notify Customers" invisible="state != 'traced' or is_drill"
+                            groups="aifa_base.group_aifa_manager"
+                            confirm="This sends a recall notice to every affected customer. Continue?"/>
+                    <button name="action_close" type="object" string="Close"
+                            invisible="state == 'closed'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,traced,closed"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Drill" bg_color="text-bg-info"
+                            invisible="not is_drill"/>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Trigger">
+                            <field name="date"/>
+                            <field name="is_drill"/>
+                            <field name="reason"/>
+                            <field name="initiated_by_id"/>
+                        </group>
+                        <group string="Suspect Material">
+                            <field name="intake_batch_id"/>
+                            <field name="dehydration_run_id"/>
+                            <field name="lot_id"/>
+                        </group>
+                    </group>
+                    <field name="description"/>
+                    <group string="Outcome">
+                        <group>
+                            <field name="affected_lot_count"/>
+                            <field name="customer_count"/>
+                        </group>
+                        <group>
+                            <field name="total_units"/>
+                            <field name="trace_seconds"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Distribution Reached" name="lines">
+                            <field name="line_ids">
+                                <tree editable="bottom">
+                                    <field name="date" readonly="1"/>
+                                    <field name="lot_id" readonly="1"/>
+                                    <field name="product_id" readonly="1"/>
+                                    <field name="partner_id" readonly="1"/>
+                                    <field name="picking_id" readonly="1"/>
+                                    <field name="quantity" sum="Units" readonly="1"/>
+                                    <field name="recovered"/>
+                                    <field name="recovery_note"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Affected Lots" name="lots">
+                            <field name="affected_lot_ids" readonly="1">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="product_id"/>
+                                    <field name="aifa_quality_state" widget="badge"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Conclusion" name="conclusion">
+                            <field name="conclusion"
+                                   placeholder="Effectiveness percentage, time to trace, gaps found, actions agreed..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_aifa_recall" model="ir.actions.act_window">
+        <field name="name">Recalls &amp; Drills</field>
+        <field name="res_model">aifa.recall</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Run a traceability exercise</p>
+            <p>Pick a suspect intake lot or drying run; the system resolves every
+               finished lot and every delivery it reached. Run it quarterly as a
+               drill so that the real event is routine.</p>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_aifa_quality_check" name="Quality Checks"
+              parent="aifa_base.menu_aifa_quality" action="action_aifa_quality_check" sequence="10"/>
+    <menuitem id="menu_aifa_check_failed" name="Failed Checks"
+              parent="aifa_base.menu_aifa_quality" action="action_aifa_check_failed" sequence="15"/>
+    <menuitem id="menu_aifa_ncr" name="Non-Conformance Reports"
+              parent="aifa_base.menu_aifa_quality" action="action_aifa_ncr" sequence="20"/>
+    <menuitem id="menu_aifa_checkweigh" name="Check-Weighing"
+              parent="aifa_base.menu_aifa_quality" action="action_aifa_checkweigh" sequence="30"/>
+    <menuitem id="menu_aifa_sanitation" name="Sanitation / CIP Logs"
+              parent="aifa_base.menu_aifa_quality" action="action_aifa_sanitation" sequence="40"/>
+    <menuitem id="menu_aifa_control_point" name="Control Points (HACCP)"
+              parent="aifa_base.menu_aifa_config_master"
+              action="action_aifa_control_point" sequence="60"/>
+    <menuitem id="menu_aifa_control_option" name="Check Options"
+              parent="aifa_base.menu_aifa_config_master"
+              action="action_aifa_control_option" sequence="61"/>
+</odoo>

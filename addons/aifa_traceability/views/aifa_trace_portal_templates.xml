@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="trace_public_page" name="Aifa Provenance">
+        <t t-call="web.frontend_layout">
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="no_footer" t-value="True"/>
+            <div class="container my-5" style="max-width: 760px;">
+                <div class="text-center mb-4">
+                    <h1 class="mb-1">Aifa Foods</h1>
+                    <p class="text-muted">From the farmers to you, with love.</p>
+                </div>
+
+                <form action="/trace" method="get" class="input-group mb-4">
+                    <input type="text" name="lot_code" class="form-control"
+                           placeholder="Enter or scan the lot code on your pack"
+                           t-att-value="lot_code or ''"/>
+                    <button class="btn btn-primary" type="submit">Trace</button>
+                </form>
+
+                <t t-if="lot_code and not found">
+                    <div class="alert alert-warning">
+                        We could not find lot <strong t-esc="lot_code"/>. Thermal labels can
+                        smudge &#8212; please check the characters and try again, or send us a
+                        photo of the pack.
+                    </div>
+                </t>
+
+                <t t-if="found">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h3 class="card-title" t-esc="payload['product']"/>
+                            <p class="text-muted mb-2">
+                                Lot <strong t-esc="payload['lot']"/>
+                                <t t-if="payload['expiry']">
+                                    &#183; best before <span t-esc="payload['expiry']"/>
+                                </t>
+                            </p>
+                            <span t-if="payload['released']" class="badge text-bg-success">
+                                Quality released
+                            </span>
+                            <span t-else="" class="badge text-bg-secondary">
+                                Quality status: <t t-esc="payload['quality_state']"/>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5>Where your fruit grew</h5>
+                            <p t-if="payload['regions']">
+                                <t t-foreach="payload['regions']" t-as="region">
+                                    <span class="badge text-bg-light border me-1" t-esc="region"/>
+                                </t>
+                            </p>
+                            <ul class="list-unstyled mb-0">
+                                <li t-if="payload['cooperatives']">
+                                    <strong>Cooperatives:</strong>
+                                    <t t-esc="', '.join(payload['cooperatives'])"/>
+                                </li>
+                                <li t-if="payload['outgrower_count']">
+                                    <strong>Smallholder outgrowers:</strong>
+                                    <t t-esc="payload['outgrower_count']"/>
+                                    <t t-if="payload['women_outgrower_pct']">
+                                        (<t t-esc="'%.0f' % payload['women_outgrower_pct']"/>% women)
+                                    </t>
+                                </li>
+                                <li t-if="payload['harvest_dates']">
+                                    <strong>Harvested:</strong>
+                                    <t t-esc="', '.join(payload['harvest_dates'])"/>
+                                </li>
+                                <li t-if="payload['fresh_fruit_kg']">
+                                    <strong>Fresh fruit in this batch:</strong>
+                                    <t t-esc="'%.0f' % payload['fresh_fruit_kg']"/> kg
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3" t-if="payload['drying_runs']">
+                        <div class="card-body">
+                            <h5>How it was dried</h5>
+                            <table class="table table-sm mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th><th>Chamber</th>
+                                        <th class="text-end">Temperature</th>
+                                        <th class="text-end">Hours</th>
+                                        <th class="text-end">Moisture</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="payload['drying_runs']" t-as="run">
+                                        <td t-esc="run['date']"/>
+                                        <td t-esc="run['chamber']"/>
+                                        <td class="text-end">
+                                            <t t-esc="'%.1f' % run['avg_temp_c']"/> &#176;C
+                                        </td>
+                                        <td class="text-end" t-esc="run['hours']"/>
+                                        <td class="text-end">
+                                            <t t-esc="'%.1f' % run['moisture_pct']"/>%
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p class="text-muted small mt-2 mb-0">
+                                No added sugar, no preservatives, no sulphur dioxide.
+                                Just fruit and warm air.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="card" t-if="payload['checks']">
+                        <div class="card-body">
+                            <h5>Quality checks passed</h5>
+                            <ul class="list-unstyled mb-0">
+                                <li t-foreach="payload['checks']" t-as="check">
+                                    <span t-if="check['result'] == 'pass'" class="text-success">&#10003;</span>
+                                    <span t-else="" class="text-warning">&#9888;</span>
+                                    <t t-esc="check['point']"/>
+                                    <t t-if="check['value']">
+                                        &#8212; <t t-esc="check['value']"/>
+                                        <t t-esc="check['unit'] or ''"/>
+                                    </t>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+
+</odoo>

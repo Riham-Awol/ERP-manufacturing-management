@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_aifa_quality_check_tree" model="ir.ui.view">
+        <field name="name">aifa.quality.check.tree</field>
+        <field name="model">aifa.quality.check</field>
+        <field name="arch" type="xml">
+            <tree string="Quality Checks" decoration-danger="result == 'fail'"
+                  decoration-warning="result == 'waived'"
+                  decoration-muted="state == 'cancel'">
+                <field name="date"/>
+                <field name="name"/>
+                <field name="control_point_id"/>
+                <field name="stage" optional="show"/>
+                <field name="subject_label"/>
+                <field name="crop_id" optional="hide"/>
+                <field name="value_numeric" optional="show"/>
+                <field name="uom_label" optional="show"/>
+                <field name="limit_min" optional="hide"/>
+                <field name="limit_max" optional="hide"/>
+                <field name="deviation" optional="hide"/>
+                <field name="inspector_id"/>
+                <field name="result" widget="badge" decoration-success="result == 'pass'"
+                       decoration-danger="result == 'fail'" decoration-warning="result == 'waived'"/>
+                <field name="state" widget="badge" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_aifa_quality_check_form" model="ir.ui.view">
+        <field name="name">aifa.quality.check.form</field>
+        <field name="model">aifa.quality.check</field>
+        <field name="arch" type="xml">
+            <form string="Quality Check">
+                <header>
+                    <button name="action_record" type="object" string="Record Result"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_waive" type="object" string="Grant Concession"
+                            invisible="result != 'fail' or state == 'cancel'"
+                            groups="aifa_base.group_aifa_qa_manager"
+                            confirm="Granting a concession releases product that failed a critical limit. This is recorded permanently against your name. Continue?"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state == 'cancel'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Failed" bg_color="text-bg-danger"
+                            invisible="result != 'fail'"/>
+                    <widget name="web_ribbon" title="Concession" bg_color="text-bg-warning"
+                            invisible="result != 'waived'"/>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Control Point">
+                            <field name="control_point_id"/>
+                            <field name="stage"/>
+                            <field name="point_type"/>
+                            <field name="is_blocking"/>
+                            <field name="date"/>
+                            <field name="inspector_id"/>
+                        </group>
+                        <group string="Subject">
+                            <field name="crop_id"/>
+                            <field name="intake_batch_id"/>
+                            <field name="prep_log_id"/>
+                            <field name="dehydration_run_id"/>
+                            <field name="production_id"/>
+                            <field name="lot_id"/>
+                            <field name="dehydrator_id"/>
+                        </group>
+                    </group>
+                    <group string="Measurement">
+                        <group>
+                            <field name="result_type" invisible="1"/>
+                            <label for="value_numeric" invisible="result_type != 'numeric'"/>
+                            <div class="o_row" invisible="result_type != 'numeric'">
+                                <field name="value_numeric" class="oe_inline"/>
+                                <field name="uom_label" class="oe_inline" readonly="1" nolabel="1"/>
+                            </div>
+                            <field name="value_bool" invisible="result_type != 'boolean'"/>
+                            <field name="value_option_id" invisible="result_type != 'option'"/>
+                            <field name="value_text" invisible="result_type != 'text'"/>
+                            <field name="sample_ref"/>
+                        </group>
+                        <group>
+                            <field name="limit_min" invisible="result_type != 'numeric'"/>
+                            <field name="limit_max" invisible="result_type != 'numeric'"/>
+                            <field name="deviation" invisible="result_type != 'numeric'"/>
+                            <field name="result"/>
+                            <field name="ncr_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-warning" role="alert" invisible="result != 'fail'">
+                        <strong>Corrective action:</strong>
+                        <field name="corrective_action" readonly="1" nolabel="1"/>
+                    </div>
+                    <field name="note" placeholder="Observations, instrument serial, concession justification..."/>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_aifa_quality_check_search" model="ir.ui.view">
+        <field name="name">aifa.quality.check.search</field>
+        <field name="model">aifa.quality.check</field>
+        <field name="arch" type="xml">
+            <search string="Quality Checks">
+                <field name="subject_label"/>
+                <field name="control_point_id"/>
+                <field name="inspector_id"/>
+                <field name="crop_id"/>
+                <filter name="failed" string="Failed" domain="[('result','=','fail')]"/>
+                <filter name="waived" string="Under Concession" domain="[('result','=','waived')]"/>
+                <filter name="ccp" string="Critical Control Points" domain="[('point_type','=','ccp')]"/>
+                <separator/>
+                <filter name="last7" string="Last 7 Days"
+                        domain="[('date','&gt;=',(context_today() - relativedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <group expand="0" string="Group By">
+                    <filter name="g_point" string="Control Point" context="{'group_by':'control_point_id'}"/>
+                    <filter name="g_stage" string="Stage" context="{'group_by':'stage'}"/>
+                    <filter name="g_result" string="Result" context="{'group_by':'result'}"/>
+                    <filter name="g_date" string="Date" context="{'group_by':'date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_aifa_quality_check" model="ir.actions.act_window">
+        <field name="name">Quality Checks</field>
+        <field name="res_model">aifa.quality.check</field>
+        <field name="view_mode">tree,form,pivot</field>
+        <field name="search_view_id" ref="view_aifa_quality_check_search"/>
+    </record>
+
+    <record id="view_aifa_quality_check_pivot" model="ir.ui.view">
+        <field name="name">aifa.quality.check.pivot</field>
+        <field name="model">aifa.quality.check</field>
+        <field name="arch" type="xml">
+            <pivot string="Check Results" sample="1">
+                <field name="control_point_id" type="row"/>
+                <field name="result" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_aifa_check_failed" model="ir.actions.act_window">
+        <field name="name">Failed Checks</field>
+        <field name="res_model">aifa.quality.check</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('result','=','fail')]</field>
+    </record>
+
+    <!-- Quality status on the stock lot -->
+    <record id="view_stock_lot_form_aifa" model="ir.ui.view">
+        <field name="name">stock.lot.form.aifa</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_aifa_checks" type="object" class="oe_stat_button"
+                        icon="fa-check-square-o">
+                    <field name="aifa_check_count" widget="statinfo" string="QA Checks"/>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='product_id']" position="after">
+                <field name="aifa_quality_state" widget="badge"
+                       decoration-success="aifa_quality_state == 'released'"
+                       decoration-danger="aifa_quality_state in ('quarantine','rejected')"/>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button name="action_release_quality" type="object" string="Release Quality Hold"
+                        class="btn-primary" groups="aifa_base.group_aifa_qa_manager"
+                        invisible="aifa_quality_state == 'released'"/>
+                <button name="action_quarantine_quality" type="object" string="Quarantine"
+                        class="btn-danger" groups="aifa_base.group_aifa_qa_manager"
+                        invisible="aifa_quality_state == 'quarantine'"/>
+                <button name="action_print_audit_dossier" type="object"
+                        string="Print Audit Dossier"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_stock_lot_tree_aifa" model="ir.ui.view">
+        <field name="name">stock.lot.tree.aifa</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_tree"/>
+        <field name="arch" type="xml">
+            <field name="product_id" position="after">
+                <field name="aifa_quality_state" widget="badge" optional="show"
+                       decoration-success="aifa_quality_state == 'released'"
+                       decoration-danger="aifa_quality_state in ('quarantine','rejected')"/>
+            </field>
+        </field>
+    </record>
+</odoo>

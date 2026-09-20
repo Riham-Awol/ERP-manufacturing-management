@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_aifa_sanitation_tree" model="ir.ui.view">
+        <field name="name">aifa.sanitation.log.tree</field>
+        <field name="model">aifa.sanitation.log</field>
+        <field name="arch" type="xml">
+            <tree string="Sanitation Logs" decoration-danger="state == 'failed'"
+                  decoration-success="state == 'signed'">
+                <field name="date"/>
+                <field name="name"/>
+                <field name="area"/>
+                <field name="dehydrator_id" optional="show"/>
+                <field name="shift"/>
+                <field name="method"/>
+                <field name="chemical" optional="hide"/>
+                <field name="concentration_ppm" optional="hide"/>
+                <field name="visual_pass"/>
+                <field name="atp_rlu" optional="show"/>
+                <field name="atp_pass" optional="show"/>
+                <field name="performed_by_id"/>
+                <field name="verified_by_id"/>
+                <field name="state" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_aifa_sanitation_form" model="ir.ui.view">
+        <field name="name">aifa.sanitation.log.form</field>
+        <field name="model">aifa.sanitation.log</field>
+        <field name="arch" type="xml">
+            <form string="Sanitation Log">
+                <header>
+                    <button name="action_sign_off" type="object" string="Verify &amp; Sign Off"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_fail" type="object" string="Record Failure"
+                            class="btn-danger" invisible="state == 'failed'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Scope">
+                            <field name="date"/>
+                            <field name="area"/>
+                            <field name="dehydrator_id"/>
+                            <field name="shift"/>
+                            <field name="method"/>
+                        </group>
+                        <group string="Chemistry">
+                            <field name="chemical"/>
+                            <field name="concentration_ppm"/>
+                            <field name="contact_minutes"/>
+                            <field name="water_temp_c"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Verification">
+                            <field name="visual_pass"/>
+                            <field name="atp_swab_taken"/>
+                            <field name="atp_rlu" invisible="not atp_swab_taken"/>
+                            <field name="atp_limit_rlu" invisible="not atp_swab_taken"/>
+                            <field name="atp_pass" readonly="1"/>
+                        </group>
+                        <group string="Signatures">
+                            <field name="performed_by_id"/>
+                            <field name="verified_by_id" readonly="1"/>
+                            <field name="verified_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <field name="note"/>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_aifa_sanitation" model="ir.actions.act_window">
+        <field name="name">Sanitation / CIP Logs</field>
+        <field name="res_model">aifa.sanitation.log</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

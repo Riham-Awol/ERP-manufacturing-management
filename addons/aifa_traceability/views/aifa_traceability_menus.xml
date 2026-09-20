@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_aifa_lot_trace" name="Lot Genealogy"
+              parent="aifa_base.menu_aifa_traceability"
+              action="action_aifa_lot_trace" sequence="10"/>
+    <menuitem id="menu_aifa_lot_quarantined" name="Quarantined Lots"
+              parent="aifa_base.menu_aifa_traceability"
+              action="action_aifa_lot_quarantined" sequence="20"/>
+    <menuitem id="menu_aifa_recall" name="Recalls &amp; Drills"
+              parent="aifa_base.menu_aifa_traceability"
+              action="action_aifa_recall" sequence="30"/>
+</odoo>

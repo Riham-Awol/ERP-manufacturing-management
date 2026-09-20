@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_audit_dossier" model="ir.actions.report">
+        <field name="name">EFDA / Export Audit Dossier</field>
+        <field name="model">stock.lot</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">aifa_quality.report_audit_dossier</field>
+        <field name="report_file">aifa_quality.report_audit_dossier</field>
+        <field name="print_report_name">'Audit Dossier - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="stock.model_stock_lot"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_audit_dossier">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="lot">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 class="mb-0">Batch Compliance Dossier</h2>
+                        <p class="text-muted">
+                            Yarashoo Agro Industry PLC / Aifa Foods &#8212; prepared for
+                            Ethiopian Food and Drug Authority inspection and export certification.
+                        </p>
+
+                        <table class="table table-sm table-borderless mt-3">
+                            <tr>
+                                <td style="width:25%"><strong>Lot / Batch</strong></td>
+                                <td><span t-field="lot.name"/></td>
+                                <td style="width:25%"><strong>Product</strong></td>
+                                <td><span t-field="lot.product_id"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Quality status</strong></td>
+                                <td><span t-field="lot.aifa_quality_state"/></td>
+                                <td><strong>Expiry</strong></td>
+                                <td><span t-field="lot.expiration_date"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Dossier issued</strong></td>
+                                <td><span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/></td>
+                                <td><strong>Issued by</strong></td>
+                                <td><span t-esc="user.name"/></td>
+                            </tr>
+                        </table>
+
+                        <h4 class="mt-4">1. Quality control results</h4>
+                        <table class="table table-sm o_main_table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th><th>Control point</th><th>Type</th>
+                                    <th class="text-end">Measured</th>
+                                    <th class="text-end">Limits</th>
+                                    <th>Result</th><th>Inspector</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="lot.aifa_check_ids.filtered(lambda c: c.state == 'done')"
+                                    t-as="check">
+                                    <td><span t-field="check.date"/></td>
+                                    <td><span t-field="check.control_point_id"/></td>
+                                    <td><span t-field="check.point_type"/></td>
+                                    <td class="text-end">
+                                        <t t-if="check.result_type == 'numeric'">
+                                            <span t-field="check.value_numeric"/>
+                                            <span t-field="check.uom_label"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span t-esc="check._format_value()"/>
+                                        </t>
+                                    </td>
+                                    <td class="text-end">
+                                        <span t-field="check.limit_min"/> &#8212;
+                                        <span t-field="check.limit_max"/>
+                                    </td>
+                                    <td><strong t-field="check.result"/></td>
+                                    <td><span t-field="check.inspector_id"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p t-if="not lot.aifa_check_ids" class="text-muted">
+                            No quality check has been recorded against this lot.
+                        </p>
+
+                        <h4 class="mt-4">2. Farm-gate origin</h4>
+                        <t t-set="origins" t-value="lot.aifa_origin_intake_ids"/>
+                        <table class="table table-sm o_main_table" t-if="origins">
+                            <thead>
+                                <tr>
+                                    <th>Intake lot</th><th>Outgrower</th><th>Cooperative</th>
+                                    <th>Region / centre</th><th>Intake date</th>
+                                    <th class="text-end">Accepted kg</th><th>Grade</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="origins" t-as="batch">
+                                    <td><span t-field="batch.lot_number"/></td>
+                                    <td><span t-field="batch.farmer_id.name"/></td>
+                                    <td><span t-field="batch.cooperative_id.name"/></td>
+                                    <td><span t-field="batch.region_id.name"/> /
+                                        <span t-field="batch.centre_id.name"/></td>
+                                    <td><span t-field="batch.intake_date"/></td>
+                                    <td class="text-end"><span t-field="batch.accepted_weight_kg"/></td>
+                                    <td><span t-field="batch.gate_grade"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p t-if="not origins" class="text-muted">
+                            No upstream intake lot is linked to this batch. For a finished
+                            goods lot this means the genealogy has not yet been rebuilt;
+                            run the traceability rebuild before issuing the dossier.
+                        </p>
+
+                        <h4 class="mt-4">3. Drying records</h4>
+                        <t t-set="runs" t-value="lot.aifa_origin_run_ids"/>
+                        <table class="table table-sm o_main_table" t-if="runs">
+                            <thead>
+                                <tr>
+                                    <th>Run</th><th>Chamber</th><th>Loaded</th><th>Unloaded</th>
+                                    <th class="text-end">Avg temp</th>
+                                    <th class="text-end">Hours</th>
+                                    <th class="text-end">Moisture</th>
+                                    <th class="text-end">aw</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="runs" t-as="run">
+                                    <td><span t-field="run.wip_lot_code"/></td>
+                                    <td><span t-field="run.dehydrator_id"/></td>
+                                    <td><span t-field="run.load_datetime"/></td>
+                                    <td><span t-field="run.unload_datetime"/></td>
+                                    <td class="text-end"><span t-field="run.avg_temp_c"/> &#176;C</td>
+                                    <td class="text-end"><span t-field="run.duration_hours"/></td>
+                                    <td class="text-end"><span t-field="run.moisture_out_pct"/> %</td>
+                                    <td class="text-end"><span t-field="run.water_activity"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h4 class="mt-4">4. Declaration</h4>
+                        <p>
+                            The records above are extracted directly from the Aifa Foods ERP
+                            system and have not been transcribed by hand. Every entry carries the
+                            user, timestamp and before/after values in the system audit trail,
+                            which is available to the inspector on request.
+                        </p>
+                        <table class="table table-sm table-borderless mt-4">
+                            <tr>
+                                <td style="width:50%">
+                                    QA Manager (name / signature / date)<br/><br/>
+                                    _____________________________________
+                                </td>
+                                <td>
+                                    Inspecting Authority (name / signature / date)<br/><br/>
+                                    _____________________________________
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

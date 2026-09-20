@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_aifa_checkweigh_tree" model="ir.ui.view">
+        <field name="name">aifa.checkweigh.session.tree</field>
+        <field name="model">aifa.checkweigh.session</field>
+        <field name="arch" type="xml">
+            <tree string="Check-Weighing" decoration-danger="verdict == 'fail'"
+                  decoration-warning="verdict == 'adjust'">
+                <field name="date"/>
+                <field name="product_id"/>
+                <field name="lot_id" optional="show"/>
+                <field name="nominal_weight_g"/>
+                <field name="sample_count"/>
+                <field name="mean_g"/>
+                <field name="stdev_g"/>
+                <field name="min_g" optional="show"/>
+                <field name="giveaway_g" optional="show"/>
+                <field name="giveaway_pct" optional="hide"/>
+                <field name="under_t1_count"/>
+                <field name="under_t2_count"/>
+                <field name="cpk" optional="show"/>
+                <field name="verdict" widget="badge" decoration-success="verdict == 'pass'"
+                       decoration-danger="verdict == 'fail'" decoration-warning="verdict == 'adjust'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_aifa_checkweigh_form" model="ir.ui.view">
+        <field name="name">aifa.checkweigh.session.form</field>
+        <field name="model">aifa.checkweigh.session</field>
+        <field name="arch" type="xml">
+            <form string="Check-Weighing Session">
+                <header>
+                    <button name="action_close" type="object" string="Close Session"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Run">
+                            <field name="date"/>
+                            <field name="production_id"/>
+                            <field name="product_id"/>
+                            <field name="lot_id"/>
+                            <field name="operator_id"/>
+                            <field name="scale_serial"/>
+                        </group>
+                        <group string="Targets">
+                            <field name="nominal_weight_g"/>
+                            <field name="target_fill_g"/>
+                            <field name="tne_g"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Samples" name="samples">
+                            <field name="sample_ids">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="weight_g"/>
+                                    <field name="deviation_g"/>
+                                    <field name="seal_ok"/>
+                                    <field name="taken_at" optional="hide"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="note"/>
+                        </page>
+                    </notebook>
+                    <group string="Statistics">
+                        <group>
+                            <field name="sample_count"/>
+                            <field name="mean_g"/>
+                            <field name="stdev_g"/>
+                            <field name="min_g"/>
+                            <field name="max_g"/>
+                        </group>
+                        <group>
+                            <field name="giveaway_g"/>
+                            <field name="giveaway_pct" widget="percentage"/>
+                            <field name="under_t1_count"/>
+                            <field name="under_t2_count"/>
+                            <field name="cpk"/>
+                            <field name="verdict"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_aifa_checkweigh" model="ir.actions.act_window">
+        <field name="name">Check-Weighing</field>
+        <field name="res_model">aifa.checkweigh.session</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Start a check-weighing session</p>
+            <p>Sample pouches off the line. The session computes the mean fill,
+               the giveaway against the declared weight and how many packs fall
+               below the tolerable negative error, so the filler can be tuned
+               instead of guessed at.</p>
+        </field>
+    </record>
+</odoo>

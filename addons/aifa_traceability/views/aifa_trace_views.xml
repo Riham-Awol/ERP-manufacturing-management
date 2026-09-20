@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_stock_lot_form_trace" model="ir.ui.view">
+        <field name="name">stock.lot.form.trace</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="aifa_quality.view_stock_lot_form_aifa"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_rebuild_genealogy" type="object"
+                        string="Rebuild Genealogy" class="btn-secondary"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Farm-to-Shelf Genealogy" name="aifa_trace">
+                    <group>
+                        <group>
+                            <field name="aifa_origin_summary" readonly="1"/>
+                            <field name="aifa_trace_rebuilt_on" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="aifa_origin_region_ids" widget="many2many_tags"
+                                   readonly="1"/>
+                        </group>
+                    </group>
+                    <separator string="Farm-gate intake lots"/>
+                    <field name="aifa_origin_intake_ids" readonly="1">
+                        <tree>
+                            <field name="lot_number"/>
+                            <field name="farmer_id"/>
+                            <field name="cooperative_id"/>
+                            <field name="region_id"/>
+                            <field name="centre_id"/>
+                            <field name="intake_date"/>
+                            <field name="accepted_weight_kg" sum="kg"/>
+                            <field name="gate_grade"/>
+                        </tree>
+                    </field>
+                    <separator string="Dehydration runs"/>
+                    <field name="aifa_origin_run_ids" readonly="1">
+                        <tree>
+                            <field name="wip_lot_code"/>
+                            <field name="dehydrator_id"/>
+                            <field name="load_datetime"/>
+                            <field name="avg_temp_c"/>
+                            <field name="duration_hours"/>
+                            <field name="moisture_out_pct"/>
+                            <field name="water_activity"/>
+                        </tree>
+                    </field>
+                    <separator string="Consumed lots (ancestors)"/>
+                    <field name="aifa_parent_lot_ids" readonly="1">
+                        <tree>
+                            <field name="name"/>
+                            <field name="product_id"/>
+                            <field name="aifa_quality_state" widget="badge"/>
+                        </tree>
+                    </field>
+                    <separator string="Produced lots (descendants)"/>
+                    <field name="aifa_child_lot_ids" readonly="1">
+                        <tree>
+                            <field name="name"/>
+                            <field name="product_id"/>
+                            <field name="aifa_quality_state" widget="badge"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_aifa_lot_trace" model="ir.actions.act_window">
+        <field name="name">Lot Genealogy</field>
+        <field name="res_model">stock.lot</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'display_complete': True}</field>
+    </record>
+
+    <record id="action_aifa_lot_quarantined" model="ir.actions.act_window">
+        <field name="name">Quarantined Lots</field>
+        <field name="res_model">stock.lot</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('aifa_quality_state','in',('quarantine','rejected'))]</field>
+    </record>
+
+    <record id="ir_cron_aifa_rebuild_genealogy" model="ir.cron">
+        <field name="name">Aifa: rebuild lot genealogy</field>
+        <field name="model_id" ref="stock.model_stock_lot"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_rebuild_genealogy()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active" eval="True"/>
+    </record>
+
+</odoo>

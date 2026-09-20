@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_recall_qa,aifa.recall qa,model_aifa_recall,aifa_base.group_aifa_qa_manager,1,1,1,0
+access_recall_user,aifa.recall user,model_aifa_recall,base.group_user,1,0,0,0
+access_recall_manager,aifa.recall manager,model_aifa_recall,aifa_base.group_aifa_manager,1,1,1,1
+access_recall_line_qa,aifa.recall.line qa,model_aifa_recall_line,aifa_base.group_aifa_qa_manager,1,1,1,1
+access_recall_line_user,aifa.recall.line user,model_aifa_recall_line,base.group_user,1,0,0,0
+access_recall_line_manager,aifa.recall.line manager,model_aifa_recall_line,aifa_base.group_aifa_manager,1,1,1,1
