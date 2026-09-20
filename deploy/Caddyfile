@@ -1,0 +1,34 @@
+# TLS termination for the Aifa demo.
+#
+# Replace the hostname, point an A record at the server, and Caddy obtains and
+# renews a Let's Encrypt certificate on its own. Nothing else to configure.
+#
+# The /websocket route matters: Odoo's live updates (chatter, notifications)
+# ride a websocket. Caddy upgrades it automatically, but when you move to
+# multi-worker Odoo the websocket must go to the gevent port (8072) instead,
+# so that route is already split out here.
+
+aifa-demo.example.com {
+	encode zstd gzip
+
+	# Long-polling / websocket. With workers = 0 this is the same container
+	# port; with workers > 0, change to odoo:8072.
+	@websocket path /websocket /longpolling/*
+	handle @websocket {
+		reverse_proxy odoo:8069
+	}
+
+	handle {
+		reverse_proxy odoo:8069
+	}
+
+	# The database manager can create and drop databases. Leave it closed on
+	# anything reachable from the internet and use the CLI instead.
+	handle_path /web/database/* {
+		respond "Database manager is disabled on this host." 403
+	}
+
+	log {
+		output file /var/log/caddy/aifa.log
+	}
+}

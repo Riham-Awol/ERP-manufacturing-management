@@ -1,10 +1,12 @@
 # Aifa Agro ERP - demo stack
 #
 #   docker compose up -d
+#   docker compose exec odoo python3 /mnt/aifa-tools/create_db.py aifa_demo
 #   docker compose exec odoo odoo -d aifa_demo \
 #       -i aifa_base,aifa_sourcing,aifa_processing,aifa_quality,aifa_traceability,aifa_consignment,aifa_impact \
 #       --stop-after-init
 #   docker compose exec -T odoo odoo shell -d aifa_demo < ../tools/seed_demo.py
+#   docker compose exec -T odoo odoo shell -d aifa_demo < ../tools/smoke_test.py
 #
 # Then http://localhost:8069  (admin / admin)
 #
@@ -40,6 +42,7 @@ services:
     volumes:
       - aifa-odoo:/var/lib/odoo
       - ../addons:/mnt/extra-addons:ro
+      - ../tools:/mnt/aifa-tools:ro
       - ./odoo.conf:/etc/odoo/odoo.conf:ro
     command: odoo
 

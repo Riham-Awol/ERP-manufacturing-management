@@ -1,0 +1,45 @@
+# TLS overlay for a hosted demo. Use together with the base file:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.https.yml up -d
+#
+# Before you run it:
+#   1. put your hostname in Caddyfile (replace aifa-demo.example.com)
+#   2. point an A record at this server
+#   3. change every password in docker-compose.yml and odoo.conf
+#   4. set  proxy_mode = True  and  list_db = False  in odoo.conf
+#
+# This overlay stops publishing Odoo on the host, so port 8069 is no longer
+# reachable directly; everything goes through Caddy on 80/443.
+#
+# `!override` needs Docker Compose 2.24 or newer. On an older Compose, delete
+# the two `ports:` lines from docker-compose.yml by hand instead and drop the
+# override block below.
+
+services:
+  db:
+    restart: unless-stopped
+
+  odoo:
+    restart: unless-stopped
+    ports: !override []
+    expose:
+      - "8069"
+
+  caddy:
+    image: caddy:2
+    depends_on:
+      - odoo
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+      - caddy-logs:/var/log/caddy
+    restart: unless-stopped
+
+volumes:
+  caddy-data:
+  caddy-config:
+  caddy-logs:

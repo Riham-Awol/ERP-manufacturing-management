@@ -12,21 +12,27 @@ built around five such questions.
 # 1. Start the stack
 cd deploy && docker compose up -d && docker compose logs -f odoo   # wait for "HTTP service running"
 
-# 2. Create the database with the Aifa modules and demo data
+# 2. Create the database with Ethiopia as the country, so every figure on
+#    screen is in birr. This cannot be fixed later.
+docker compose exec odoo python3 /mnt/aifa-tools/create_db.py aifa_demo
+
+# 3. Install the Aifa modules
 docker compose exec odoo odoo -d aifa_demo \
     -i aifa_base,aifa_sourcing,aifa_processing,aifa_quality,aifa_traceability,aifa_consignment,aifa_impact \
     --stop-after-init
 
-# 3. Drive one complete farm-to-shelf cycle so the demo has real traced data
+# 4. Drive one complete farm-to-shelf cycle so the demo has real traced data
 docker compose exec -T odoo odoo shell -d aifa_demo < ../tools/seed_demo.py
+
+# 5. Confirm it is healthy before you present
+docker compose exec -T odoo odoo shell -d aifa_demo < ../tools/smoke_test.py
 ```
 
 Then open <http://localhost:8069>, log in as `admin` / `admin`, and go to
 **Aifa Agro**.
 
-> Set the company currency to ETB when you create the database, if you want birr
-> figures on screen. Odoo refuses a currency change once journal entries exist,
-> so it has to be done at creation. The workflow is unaffected either way.
+Full hosting instructions, including putting this on a URL the client can open:
+[`06-HOSTING-AND-TESTING.md`](06-HOSTING-AND-TESTING.md).
 
 Open these tabs in advance so you are not navigating while talking:
 

@@ -18,13 +18,21 @@ consignment, and donor-grade ESG reporting.
 cd deploy
 docker compose up -d
 
+# Create the database with Ethiopia as the country, so amounts are in ETB.
+# Odoo will not let you change the currency once journal entries exist, so
+# this has to happen at creation - see docs/06-HOSTING-AND-TESTING.md section 1.
+docker compose exec odoo python3 /mnt/aifa-tools/create_db.py aifa_demo
+
 docker compose exec odoo odoo -d aifa_demo \
     -i aifa_base,aifa_sourcing,aifa_processing,aifa_quality,aifa_traceability,aifa_consignment,aifa_impact \
     --stop-after-init
 
-# Optional but recommended: drive one complete farm-to-shelf cycle so the
-# demo carries real traced data rather than static fixtures.
+# Recommended: drive one complete farm-to-shelf cycle so the demo carries
+# real traced data rather than static fixtures.
 docker compose exec -T odoo odoo shell -d aifa_demo < ../tools/seed_demo.py
+
+# Confirm the deployment is healthy (read-only, PASS/FAIL per check).
+docker compose exec -T odoo odoo shell -d aifa_demo < ../tools/smoke_test.py
 ```
 
 Open <http://localhost:8069> (`admin` / `admin`) and go to **Aifa Agro**.
@@ -34,6 +42,8 @@ Installing into an existing Odoo 17 deployment instead:
 ```bash
 ./deploy/install.sh <database> [odoo-bin] [core-addons-path]
 ```
+
+Hosting it for a client demo, with TLS: **[`docs/06-HOSTING-AND-TESTING.md`](docs/06-HOSTING-AND-TESTING.md)**.
 
 ---
 
@@ -46,6 +56,7 @@ Installing into an existing Odoo 17 deployment instead:
 | [`docs/03-FRS-COVERAGE.md`](docs/03-FRS-COVERAGE.md) | Every v2.4 functional requirement mapped to built / partial / core Odoo / not built |
 | [`docs/04-DEMO-SCRIPT.md`](docs/04-DEMO-SCRIPT.md) | A 30-minute demo built around five questions the plant already argues about |
 | [`docs/05-MODULE-REFERENCE.md`](docs/05-MODULE-REFERENCE.md) | Models, key fields, REST endpoints, extension points |
+| [`docs/06-HOSTING-AND-TESTING.md`](docs/06-HOSTING-AND-TESTING.md) | Running it locally, hosting it with TLS, the smoke test, and troubleshooting |
 
 ---
 
