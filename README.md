@@ -15,6 +15,23 @@ consignment, and donor-grade ESG reporting.
 ## Quick start
 
 ```bash
+git clone https://github.com/Riham-Awol/ERP-manufacturing-management.git
+cd ERP-manufacturing-management/deploy
+./demo-up.sh
+```
+
+That brings up the stack, creates the database with Ethiopia so amounts are in
+birr, installs all seven modules, seeds a complete farm-to-shelf cycle, runs a
+smoke test and prints the URL. Add `--fresh` to wipe a previous attempt first.
+
+Getting `Internal Server Error`? Run `./logs.sh` for the real traceback, or
+`./demo-up.sh --fresh` to rebuild from scratch. See
+[`docs/06-HOSTING-AND-TESTING.md`](docs/06-HOSTING-AND-TESTING.md) section 6.
+
+<details>
+<summary>The same thing step by step</summary>
+
+```bash
 cd deploy
 docker compose up -d
 
@@ -34,6 +51,8 @@ docker compose exec -T odoo odoo shell -d aifa_demo < ../tools/seed_demo.py
 # Confirm the deployment is healthy (read-only, PASS/FAIL per check).
 docker compose exec -T odoo odoo shell -d aifa_demo < ../tools/smoke_test.py
 ```
+
+</details>
 
 Open <http://localhost:8069> (`admin` / `admin`) and go to **Aifa Agro**.
 

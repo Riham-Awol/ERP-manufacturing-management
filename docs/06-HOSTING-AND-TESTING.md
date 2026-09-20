@@ -56,9 +56,25 @@ field.
 
 Needs Docker Desktop or Docker Engine with the Compose plugin.
 
+**One command**, if you just want a demo that works:
+
 ```bash
 git clone https://github.com/Riham-Awol/ERP-manufacturing-management.git
 cd ERP-manufacturing-management/deploy
+./demo-up.sh            # add --fresh to wipe any previous attempt first
+```
+
+It starts the stack, waits for Postgres and Odoo, creates the database with
+Ethiopia so amounts are in birr, installs the seven modules, seeds a complete
+farm-to-shelf cycle, runs the smoke test, and prints the URL and credentials.
+It stops at the first failure rather than leaving you with a half-built demo.
+
+If a previous attempt left things in a strange state, `./demo-up.sh --fresh`
+is almost always faster than debugging it.
+
+The rest of this section is the same thing done by hand.
+
+```bash
 docker compose up -d
 
 # wait for "HTTP service (werkzeug) running"
@@ -272,7 +288,43 @@ Use `-u <module>` for one module, or `-u all` after changing anything in
 
 ---
 
-## 6. Troubleshooting
+## 6. "Internal Server Error" at http://localhost:8069/
+
+This is Werkzeug's generic 500 page. It never shows the reason — but Odoo
+always logs the full traceback.
+
+**First, read the actual error:**
+
+```bash
+cd deploy
+./logs.sh          # prints the last traceback
+./logs.sh -f       # follow live, then reload the page in the browser
+```
+
+Then work down this list. They are ordered by how often each one is the cause.
+
+| # | Cause | How to confirm | Fix |
+|---|---|---|---|
+| 1 | **No database yet, or the wrong one is being picked.** Odoo auto-selects when it finds exactly one database, and a half-installed one then blows up with no hint of which it tried | `docker compose exec db psql -U odoo -l` | Create it properly: `docker compose exec odoo python3 /mnt/aifa-tools/create_db.py aifa_demo`. `odoo.conf` now pins `db_name`/`dbfilter` to `aifa_demo`, so `/` goes straight to the right login page |
+| 2 | **Module install failed part way**, leaving a broken registry | `./logs.sh` shows a `ParseError` or `KeyError` from a module load | Easiest is to start clean: `./demo-up.sh --fresh` |
+| 3 | **Postgres is not reachable** — container unhealthy, or native service not started | `docker compose ps` shows `db` unhealthy, or `./logs.sh` shows `OperationalError` / `Connection to the database failed` | `docker compose up -d db`, or `sudo service postgresql start` on a native install |
+| 4 | **Odoo is still starting.** A large install takes minutes and the port answers before the registry is ready | `docker compose logs odoo` has not yet printed `HTTP service (werkzeug) running` | Wait, then reload |
+| 5 | **Assets cannot compile** (native installs only) | Traceback mentions `sass`, `libsass` or `rjsmin` | `pip install libsass rjsmin` and restart |
+| 6 | **Stale browser session** pointing at a database that no longer exists | The error persists on `/web` but `/web/login?db=aifa_demo` works | Clear cookies for `localhost:8069`, or use a private window |
+
+**The fastest route back to a working demo**, if you do not need to know why:
+
+```bash
+cd deploy
+./demo-up.sh --fresh
+```
+
+That destroys the containers and volumes and rebuilds everything from scratch.
+Roughly ten minutes, and it ends with a smoke test telling you it is healthy.
+
+---
+
+## 7. Troubleshooting
 
 These are the failures actually hit while building this, with what they mean.
 
@@ -292,7 +344,7 @@ These are the failures actually hit while building this, with what they mean.
 
 ---
 
-## 7. Before this goes anywhere near production
+## 8. Before this goes anywhere near production
 
 The demo stack is a demo stack. It is deliberately convenient and deliberately
 not hardened. Minimum list before real data touches it:
