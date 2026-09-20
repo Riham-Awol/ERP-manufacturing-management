@@ -24,9 +24,18 @@ That brings up the stack, creates the database with Ethiopia so amounts are in
 birr, installs all seven modules, seeds a complete farm-to-shelf cycle, runs a
 smoke test and prints the URL. Add `--fresh` to wipe a previous attempt first.
 
+To show a client on a call, put it on a public HTTPS URL without provisioning
+anything: `./share.sh`.
+
 Getting `Internal Server Error`? Run `./logs.sh` for the real traceback, or
 `./demo-up.sh --fresh` to rebuild from scratch. See
 [`docs/06-HOSTING-AND-TESTING.md`](docs/06-HOSTING-AND-TESTING.md) section 6.
+
+> **This will not deploy to Vercel, Netlify or any static/serverless host** —
+> they give `404 NOT_FOUND` because there is no front end to build. Odoo is a
+> long-running Python server with a PostgreSQL database and a filestore on
+> disk. It needs a VPS or a container platform. See
+> [`docs/06-HOSTING-AND-TESTING.md`](docs/06-HOSTING-AND-TESTING.md) section 0.
 
 <details>
 <summary>The same thing step by step</summary>

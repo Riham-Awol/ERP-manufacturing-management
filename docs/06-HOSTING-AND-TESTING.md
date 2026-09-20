@@ -1,12 +1,38 @@
 # Hosting and Testing
 
-Three ways to run this, depending on what you need it for.
+## 0. What can and cannot host this
+
+**Odoo is not a website. It is a long-running Python server with a database.**
+That rules out the whole category of static and serverless hosts:
+
+| Will not work | Why |
+|---|---|
+| **Vercel**, Netlify, GitHub Pages, Cloudflare Pages | They serve static files or short-lived serverless functions. Odoo needs a process that stays alive, holds a registry in memory that takes 10–60 seconds to build, and writes to a filestore on disk. Pointing one of these at this repo gives **404 NOT_FOUND** — there is no `index.html` and no build output, because there is no front end to build |
+| AWS Lambda, Cloud Functions, Deno Deploy | Same reason: no persistent process, no writable disk, execution time limits |
+| Shared PHP/cPanel hosting | No Python daemon, no PostgreSQL superuser |
+
+**What it needs:** a container or a VM, PostgreSQL, a persistent volume, and a
+process that stays up.
+
+| Will work | Notes |
+|---|---|
+| **Any VPS** — Hetzner, DigitalOcean, Vultr, Linode, or a local Ethiopian provider | Cheapest and fully under your control. ~€4–6/month. This is Option C below |
+| **Render**, **Railway**, **Fly.io**, DigitalOcean App Platform | Run Docker images with a managed Postgres. Convenient, a bit more per month. Avoid free tiers that sleep — a cold Odoo start takes minutes and will happen while the client is watching |
+| Your own laptop + a tunnel | Fine for a scheduled demo call. Option A-plus below |
+
+Odoo.sh is Odoo's own hosting, but it requires an Enterprise subscription,
+which defeats the zero-licence-fee argument the whole proposal rests on.
+
+---
+
+## Choosing a path
 
 | You want to… | Use | Time |
 |---|---|---|
 | Try it on your laptop | **Option A — Docker** | ~10 min |
+| Show a client today, on a call | **Option A-plus — tunnel** | +2 min |
 | Develop or debug the modules | **Option B — native** | ~30 min |
-| Show the client from a URL | **Option C — VPS + TLS** | ~45 min |
+| Give the client a URL that stays up | **Option C — VPS + TLS** | ~45 min |
 
 Whichever you pick, **read §1 first**. Getting the currency wrong at database
 creation is the one mistake that is genuinely annoying to undo.
@@ -104,6 +130,30 @@ Open <http://localhost:8069>, log in as `admin` / `admin`, go to **Aifa Agro**.
 
 To stop: `docker compose down`. To wipe everything including the data volumes:
 `docker compose down -v`.
+
+---
+
+## 2b. Option A-plus — put the laptop demo on a public URL
+
+For a demo call, you do not need a server at all. A tunnel gives the running
+local stack a public HTTPS address in about two minutes:
+
+```bash
+cd deploy
+./share.sh
+```
+
+It enables `proxy_mode` (without it every Odoo redirect points back at
+`localhost` and the client sees a broken page), then starts a Cloudflare quick
+tunnel and prints a `https://<random>.trycloudflare.com` URL. No account
+needed. `ngrok http 8069` does the same job if you already have ngrok.
+
+**Change the admin password before you share the link.** `admin`/`admin` is
+fine on a laptop and not fine on a public URL.
+
+The URL changes every run, the tunnel dies with the terminal, and your laptop
+has to stay awake — so this is for a scheduled call, not for something the
+client will come back to. For that, use Option C.
 
 ---
 
