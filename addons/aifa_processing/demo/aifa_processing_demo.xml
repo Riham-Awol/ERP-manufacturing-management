@@ -1,0 +1,519 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================== Chambers ===================== -->
+    <record id="dryer_td01" model="aifa.dehydrator">
+        <field name="name">Tunnel Dehydrator 1</field>
+        <field name="code">TD-01</field>
+        <field name="sequence">10</field>
+        <field name="dryer_type">tunnel</field>
+        <field name="workcenter_id" ref="workcenter_dry"/>
+        <field name="tray_capacity">120</field>
+        <field name="kg_per_tray">4.0</field>
+        <field name="rated_power_kw">24.0</field>
+        <field name="energy_tariff">2.12</field>
+        <field name="temp_min">45.0</field>
+        <field name="temp_max">70.0</field>
+        <field name="has_datalogger" eval="True"/>
+        <field name="note">Known cold spot on the last two trolleys; rotate trolleys at the 6-hour mark.</field>
+    </record>
+    <record id="dryer_td02" model="aifa.dehydrator">
+        <field name="name">Tunnel Dehydrator 2</field>
+        <field name="code">TD-02</field>
+        <field name="sequence">20</field>
+        <field name="dryer_type">tunnel</field>
+        <field name="workcenter_id" ref="workcenter_dry"/>
+        <field name="tray_capacity">120</field>
+        <field name="kg_per_tray">4.0</field>
+        <field name="rated_power_kw">24.0</field>
+        <field name="has_datalogger" eval="True"/>
+    </record>
+    <record id="dryer_cd01" model="aifa.dehydrator">
+        <field name="name">Tray Cabinet Dehydrator 1</field>
+        <field name="code">CD-01</field>
+        <field name="sequence">30</field>
+        <field name="dryer_type">cabinet</field>
+        <field name="workcenter_id" ref="workcenter_dry"/>
+        <field name="tray_capacity">60</field>
+        <field name="kg_per_tray">3.0</field>
+        <field name="rated_power_kw">9.0</field>
+    </record>
+    <record id="dryer_sd01" model="aifa.dehydrator">
+        <field name="name">Hybrid Solar Dryer (pilot)</field>
+        <field name="code">SD-01</field>
+        <field name="sequence">40</field>
+        <field name="dryer_type">solar</field>
+        <field name="tray_capacity">40</field>
+        <field name="kg_per_tray">3.0</field>
+        <field name="rated_power_kw">2.0</field>
+        <field name="energy_tariff">0.0</field>
+        <field name="note">P4G-funded pilot. Daytime only; back-up electric element for the night tail.</field>
+    </record>
+
+    <!-- ===================== Stage 1 BOMs: preparation ===================== -->
+    <record id="bom_prep_pine" model="mrp.bom">
+        <field name="product_tmpl_id" ref="aifa_base.product_prep_pineapple_product_template"/>
+        <field name="product_qty">55.0</field>
+        <field name="product_uom_id" ref="uom.product_uom_kgm"/>
+        <field name="type">normal</field>
+        <field name="code">PREP-PINE v1.0</field>
+        <field name="aifa_stage">prep</field>
+        <field name="aifa_crop_id" ref="aifa_base.crop_pineapple"/>
+        <field name="aifa_version">1.0</field>
+        <field name="aifa_change_note">Baseline from the 2026 discovery trials: 100 kg of Grade A Smooth Cayenne yields 55 kg of 8 mm slices after crown, shell and core removal.</field>
+    </record>
+    <record id="bom_prep_pine_l1" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_prep_pine"/>
+        <field name="product_id" ref="aifa_base.product_raw_pineapple"/>
+        <field name="product_qty">100.0</field>
+        <field name="product_uom_id" ref="uom.product_uom_kgm"/>
+        <field name="aifa_is_primary" eval="True"/>
+    </record>
+
+    <record id="bom_prep_mango" model="mrp.bom">
+        <field name="product_tmpl_id" ref="aifa_base.product_prep_mango_product_template"/>
+        <field name="product_qty">65.0</field>
+        <field name="product_uom_id" ref="uom.product_uom_kgm"/>
+        <field name="code">PREP-MANG v1.0</field>
+        <field name="aifa_stage">prep</field>
+        <field name="aifa_crop_id" ref="aifa_base.crop_mango"/>
+        <field name="aifa_version">1.0</field>
+    </record>
+    <record id="bom_prep_mango_l1" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_prep_mango"/>
+        <field name="product_id" ref="aifa_base.product_raw_mango"/>
+        <field name="product_qty">100.0</field>
+        <field name="product_uom_id" ref="uom.product_uom_kgm"/>
+        <field name="aifa_is_primary" eval="True"/>
+    </record>
+
+    <record id="bom_prep_tomato" model="mrp.bom">
+        <field name="product_tmpl_id" ref="aifa_base.product_prep_tomato_product_template"/>
+        <field name="product_qty">95.0</field>
+        <field name="product_uom_id" ref="uom.product_uom_kgm"/>
+        <field name="code">PREP-TOMA v1.0</field>
+        <field name="aifa_stage">prep</field>
+        <field name="aifa_crop_id" ref="aifa_base.crop_tomato"/>
+        <field name="aifa_version">1.0</field>
+        <field name="aifa_change_note">Tomato is halved rather than sliced, so prep loss is only the calyx and rejects.</field>
+    </record>
+    <record id="bom_prep_tomato_l1" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_prep_tomato"/>
+        <field name="product_id" ref="aifa_base.product_raw_tomato"/>
+        <field name="product_qty">100.0</field>
+        <field name="product_uom_id" ref="uom.product_uom_kgm"/>
+        <field name="aifa_is_primary" eval="True"/>
+    </record>
+
+    <!-- ===================== Stage 2 BOMs: dehydration ===================== -->
+    <record id="bom_dry_pine" model="mrp.bom">
+        <field name="product_tmpl_id" ref="aifa_base.product_dry_pineapple_product_template"/>
+        <field name="product_qty">17.0</field>
+        <field name="product_uom_id" ref="uom.product_uom_kgm"/>
+        <field name="code">DRY-PINE v1.0</field>
+        <field name="aifa_stage">dry</field>
+        <field name="aifa_crop_id" ref="aifa_base.crop_pineapple"/>
+        <field name="aifa_version">1.0</field>
+        <field name="aifa_change_note">17 kg of dried slices at 14% residual moisture per 100 kg of prepped fruit. Combined with the prep stage this is a 10.7:1 fresh-to-dried ratio.</field>
+    </record>
+    <record id="bom_dry_pine_l1" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_dry_pine"/>
+        <field name="product_id" ref="aifa_base.product_prep_pineapple"/>
+        <field name="product_qty">100.0</field>
+        <field name="product_uom_id" ref="uom.product_uom_kgm"/>
+        <field name="aifa_is_primary" eval="True"/>
+    </record>
+
+    <record id="bom_dry_mango" model="mrp.bom">
+        <field name="product_tmpl_id" ref="aifa_base.product_dry_mango_product_template"/>
+        <field name="product_qty">20.0</field>
+        <field name="product_uom_id" ref="uom.product_uom_kgm"/>
+        <field name="code">DRY-MANG v1.0</field>
+        <field name="aifa_stage">dry</field>
+        <field name="aifa_crop_id" ref="aifa_base.crop_mango"/>
+        <field name="aifa_version">1.0</field>
+    </record>
+    <record id="bom_dry_mango_l1" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_dry_mango"/>
+        <field name="product_id" ref="aifa_base.product_prep_mango"/>
+        <field name="product_qty">100.0</field>
+        <field name="product_uom_id" ref="uom.product_uom_kgm"/>
+        <field name="aifa_is_primary" eval="True"/>
+    </record>
+
+    <record id="bom_dry_tomato" model="mrp.bom">
+        <field name="product_tmpl_id" ref="aifa_base.product_dry_tomato_product_template"/>
+        <field name="product_qty">7.2</field>
+        <field name="product_uom_id" ref="uom.product_uom_kgm"/>
+        <field name="code">DRY-TOMA v1.0</field>
+        <field name="aifa_stage">dry</field>
+        <field name="aifa_crop_id" ref="aifa_base.crop_tomato"/>
+        <field name="aifa_version">1.0</field>
+        <field name="aifa_change_note">Tomato is ~94% water: only 7.2 kg of dried slices come off 100 kg of prepped halves, giving a ~14.6:1 fresh-to-dried ratio. Do NOT plan tomato capacity on the pineapple factor.</field>
+    </record>
+    <record id="bom_dry_tomato_l1" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_dry_tomato"/>
+        <field name="product_id" ref="aifa_base.product_prep_tomato"/>
+        <field name="product_qty">100.0</field>
+        <field name="product_uom_id" ref="uom.product_uom_kgm"/>
+        <field name="aifa_is_primary" eval="True"/>
+    </record>
+
+    <!-- ===================== Stage 3 BOMs: packing ===================== -->
+    <record id="bom_pack_pine_100" model="mrp.bom">
+        <field name="product_tmpl_id" ref="aifa_base.product_fg_pine_100_product_template"/>
+        <field name="product_qty">240.0</field>
+        <field name="product_uom_id" ref="uom.product_uom_unit"/>
+        <field name="code">PACK-PINE-100 v1.0</field>
+        <field name="aifa_stage">pack</field>
+        <field name="aifa_crop_id" ref="aifa_base.crop_pineapple"/>
+        <field name="aifa_version">1.0</field>
+        <field name="aifa_change_note">Batch of 10 master cartons. Fill target is 102 g against a 100 g declared weight, to satisfy the average-content rule after seal trim losses.</field>
+    </record>
+    <record id="bom_pack_pine_100_l1" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_pack_pine_100"/>
+        <field name="product_id" ref="aifa_base.product_dry_pineapple"/>
+        <field name="product_qty">24.5</field>
+        <field name="product_uom_id" ref="uom.product_uom_kgm"/>
+        <field name="aifa_is_primary" eval="True"/>
+    </record>
+    <record id="bom_pack_pine_100_l2" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_pack_pine_100"/>
+        <field name="product_id" ref="aifa_base.product_pouch_100"/>
+        <field name="product_qty">243.0</field>
+    </record>
+    <record id="bom_pack_pine_100_l3" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_pack_pine_100"/>
+        <field name="product_id" ref="aifa_base.product_o2_absorber"/>
+        <field name="product_qty">240.0</field>
+    </record>
+    <record id="bom_pack_pine_100_l4" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_pack_pine_100"/>
+        <field name="product_id" ref="aifa_base.product_label"/>
+        <field name="product_qty">245.0</field>
+    </record>
+    <record id="bom_pack_pine_100_l5" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_pack_pine_100"/>
+        <field name="product_id" ref="aifa_base.product_carton_24"/>
+        <field name="product_qty">10.0</field>
+    </record>
+
+    <record id="bom_pack_pine_35" model="mrp.bom">
+        <field name="product_tmpl_id" ref="aifa_base.product_fg_pine_35_product_template"/>
+        <field name="product_qty">480.0</field>
+        <field name="product_uom_id" ref="uom.product_uom_unit"/>
+        <field name="code">PACK-PINE-35 v1.0</field>
+        <field name="aifa_stage">pack</field>
+        <field name="aifa_crop_id" ref="aifa_base.crop_pineapple"/>
+        <field name="aifa_version">1.0</field>
+    </record>
+    <record id="bom_pack_pine_35_l1" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_pack_pine_35"/>
+        <field name="product_id" ref="aifa_base.product_dry_pineapple"/>
+        <field name="product_qty">17.3</field>
+        <field name="product_uom_id" ref="uom.product_uom_kgm"/>
+        <field name="aifa_is_primary" eval="True"/>
+    </record>
+    <record id="bom_pack_pine_35_l2" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_pack_pine_35"/>
+        <field name="product_id" ref="aifa_base.product_pouch_35"/>
+        <field name="product_qty">486.0</field>
+    </record>
+    <record id="bom_pack_pine_35_l3" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_pack_pine_35"/>
+        <field name="product_id" ref="aifa_base.product_label"/>
+        <field name="product_qty">490.0</field>
+    </record>
+    <record id="bom_pack_pine_35_l4" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_pack_pine_35"/>
+        <field name="product_id" ref="aifa_base.product_carton_24"/>
+        <field name="product_qty">10.0</field>
+    </record>
+
+    <record id="bom_pack_mango_100" model="mrp.bom">
+        <field name="product_tmpl_id" ref="aifa_base.product_fg_mango_100_product_template"/>
+        <field name="product_qty">240.0</field>
+        <field name="product_uom_id" ref="uom.product_uom_unit"/>
+        <field name="code">PACK-MANG-100 v1.0</field>
+        <field name="aifa_stage">pack</field>
+        <field name="aifa_crop_id" ref="aifa_base.crop_mango"/>
+        <field name="aifa_version">1.0</field>
+    </record>
+    <record id="bom_pack_mango_100_l1" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_pack_mango_100"/>
+        <field name="product_id" ref="aifa_base.product_dry_mango"/>
+        <field name="product_qty">24.5</field>
+        <field name="product_uom_id" ref="uom.product_uom_kgm"/>
+        <field name="aifa_is_primary" eval="True"/>
+    </record>
+    <record id="bom_pack_mango_100_l2" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_pack_mango_100"/>
+        <field name="product_id" ref="aifa_base.product_pouch_100"/>
+        <field name="product_qty">243.0</field>
+    </record>
+    <record id="bom_pack_mango_100_l3" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_pack_mango_100"/>
+        <field name="product_id" ref="aifa_base.product_o2_absorber"/>
+        <field name="product_qty">240.0</field>
+    </record>
+    <record id="bom_pack_mango_100_l4" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_pack_mango_100"/>
+        <field name="product_id" ref="aifa_base.product_carton_24"/>
+        <field name="product_qty">10.0</field>
+    </record>
+
+    <record id="bom_pack_tomato_100" model="mrp.bom">
+        <field name="product_tmpl_id" ref="aifa_base.product_fg_tomato_100_product_template"/>
+        <field name="product_qty">240.0</field>
+        <field name="product_uom_id" ref="uom.product_uom_unit"/>
+        <field name="code">PACK-TOMA-100 v1.0</field>
+        <field name="aifa_stage">pack</field>
+        <field name="aifa_crop_id" ref="aifa_base.crop_tomato"/>
+        <field name="aifa_version">1.0</field>
+    </record>
+    <record id="bom_pack_tomato_100_l1" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_pack_tomato_100"/>
+        <field name="product_id" ref="aifa_base.product_dry_tomato"/>
+        <field name="product_qty">24.5</field>
+        <field name="product_uom_id" ref="uom.product_uom_kgm"/>
+        <field name="aifa_is_primary" eval="True"/>
+    </record>
+    <record id="bom_pack_tomato_100_l2" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_pack_tomato_100"/>
+        <field name="product_id" ref="aifa_base.product_pouch_100"/>
+        <field name="product_qty">243.0</field>
+    </record>
+    <record id="bom_pack_tomato_100_l3" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_pack_tomato_100"/>
+        <field name="product_id" ref="aifa_base.product_o2_absorber"/>
+        <field name="product_qty">240.0</field>
+    </record>
+    <record id="bom_pack_tomato_100_l4" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_pack_tomato_100"/>
+        <field name="product_id" ref="aifa_base.product_carton_24"/>
+        <field name="product_qty">10.0</field>
+    </record>
+
+    <!-- Mixed medley: 40% pineapple / 40% mango / 20% tomato of the 24.5 kg fill -->
+    <record id="bom_pack_medley_100" model="mrp.bom">
+        <field name="product_tmpl_id" ref="aifa_base.product_fg_medley_100_product_template"/>
+        <field name="product_qty">240.0</field>
+        <field name="product_uom_id" ref="uom.product_uom_unit"/>
+        <field name="code">PACK-MEDL-100 v1.0</field>
+        <field name="aifa_stage">pack</field>
+        <field name="aifa_version">1.0</field>
+        <field name="aifa_change_note">Medley ratio 40/40/20 by dried weight. Each component keeps its own lot, so a medley pouch traces back to three separate farm-gate lots.</field>
+    </record>
+    <record id="bom_pack_medley_100_l1" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_pack_medley_100"/>
+        <field name="product_id" ref="aifa_base.product_dry_pineapple"/>
+        <field name="product_qty">9.8</field>
+        <field name="product_uom_id" ref="uom.product_uom_kgm"/>
+        <field name="aifa_is_primary" eval="True"/>
+    </record>
+    <record id="bom_pack_medley_100_l2" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_pack_medley_100"/>
+        <field name="product_id" ref="aifa_base.product_dry_mango"/>
+        <field name="product_qty">9.8</field>
+        <field name="product_uom_id" ref="uom.product_uom_kgm"/>
+        <field name="aifa_is_primary" eval="True"/>
+    </record>
+    <record id="bom_pack_medley_100_l3" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_pack_medley_100"/>
+        <field name="product_id" ref="aifa_base.product_dry_tomato"/>
+        <field name="product_qty">4.9</field>
+        <field name="product_uom_id" ref="uom.product_uom_kgm"/>
+        <field name="aifa_is_primary" eval="True"/>
+    </record>
+    <record id="bom_pack_medley_100_l4" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_pack_medley_100"/>
+        <field name="product_id" ref="aifa_base.product_pouch_100"/>
+        <field name="product_qty">243.0</field>
+    </record>
+    <record id="bom_pack_medley_100_l5" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_pack_medley_100"/>
+        <field name="product_id" ref="aifa_base.product_o2_absorber"/>
+        <field name="product_qty">240.0</field>
+    </record>
+    <record id="bom_pack_medley_100_l6" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_pack_medley_100"/>
+        <field name="product_id" ref="aifa_base.product_carton_24"/>
+        <field name="product_qty">10.0</field>
+    </record>
+
+    <!-- ===================== Worked prep logs ===================== -->
+    <record id="prep_log_pine_1" model="aifa.prep.log">
+        <field name="date" eval="(DateTime.today() - relativedelta(days=5)).strftime('%Y-%m-%d')"/>
+        <field name="shift">a</field>
+        <field name="crop_id" ref="aifa_base.crop_pineapple"/>
+        <field name="raw_input_kg">900.0</field>
+        <field name="prepped_output_kg">493.0</field>
+        <field name="slice_thickness_mm">8.0</field>
+        <field name="pretreatment">none</field>
+        <field name="wash_chlorine_ppm">120.0</field>
+        <field name="water_change_done" eval="True"/>
+        <field name="state">done</field>
+    </record>
+    <record id="prep_scrap_pine_1a" model="aifa.prep.scrap">
+        <field name="prep_log_id" ref="prep_log_pine_1"/>
+        <field name="cause">peel</field>
+        <field name="weight_kg">268.0</field>
+        <field name="destination">compost</field>
+    </record>
+    <record id="prep_scrap_pine_1b" model="aifa.prep.scrap">
+        <field name="prep_log_id" ref="prep_log_pine_1"/>
+        <field name="cause">core</field>
+        <field name="weight_kg">112.0</field>
+        <field name="destination">byproduct</field>
+        <field name="note">Cores diverted to the pilot pineapple vinegar trial.</field>
+    </record>
+    <record id="prep_scrap_pine_1c" model="aifa.prep.scrap">
+        <field name="prep_log_id" ref="prep_log_pine_1"/>
+        <field name="cause">trim</field>
+        <field name="weight_kg">21.0</field>
+        <field name="destination">compost</field>
+    </record>
+    <record id="prep_scrap_pine_1d" model="aifa.prep.scrap">
+        <field name="prep_log_id" ref="prep_log_pine_1"/>
+        <field name="cause">reject</field>
+        <field name="weight_kg">6.0</field>
+        <field name="destination">animal_feed</field>
+    </record>
+
+    <record id="prep_log_mango_1" model="aifa.prep.log">
+        <field name="date" eval="(DateTime.today() - relativedelta(days=3)).strftime('%Y-%m-%d')"/>
+        <field name="shift">a</field>
+        <field name="crop_id" ref="aifa_base.crop_mango"/>
+        <field name="raw_input_kg">1240.0</field>
+        <field name="prepped_output_kg">744.0</field>
+        <field name="slice_thickness_mm">7.0</field>
+        <field name="wash_chlorine_ppm">110.0</field>
+        <field name="water_change_done" eval="True"/>
+        <field name="state">done</field>
+    </record>
+    <record id="prep_scrap_mango_1a" model="aifa.prep.scrap">
+        <field name="prep_log_id" ref="prep_log_mango_1"/>
+        <field name="cause">peel</field>
+        <field name="weight_kg">236.0</field>
+        <field name="destination">compost</field>
+    </record>
+    <record id="prep_scrap_mango_1b" model="aifa.prep.scrap">
+        <field name="prep_log_id" ref="prep_log_mango_1"/>
+        <field name="cause">stone</field>
+        <field name="weight_kg">248.0</field>
+        <field name="destination">animal_feed</field>
+    </record>
+    <record id="prep_scrap_mango_1c" model="aifa.prep.scrap">
+        <field name="prep_log_id" ref="prep_log_mango_1"/>
+        <field name="cause">trim</field>
+        <field name="weight_kg">12.0</field>
+        <field name="destination">compost</field>
+    </record>
+
+    <record id="prep_log_tomato_1" model="aifa.prep.log">
+        <field name="date" eval="(DateTime.today() - relativedelta(days=1)).strftime('%Y-%m-%d')"/>
+        <field name="shift">b</field>
+        <field name="crop_id" ref="aifa_base.crop_tomato"/>
+        <field name="raw_input_kg">1160.0</field>
+        <field name="prepped_output_kg">1090.0</field>
+        <field name="slice_thickness_mm">10.0</field>
+        <field name="wash_chlorine_ppm">150.0</field>
+        <field name="water_change_done" eval="True"/>
+        <field name="state">done</field>
+    </record>
+    <record id="prep_scrap_tomato_1a" model="aifa.prep.scrap">
+        <field name="prep_log_id" ref="prep_log_tomato_1"/>
+        <field name="cause">trim</field>
+        <field name="weight_kg">44.0</field>
+        <field name="destination">compost</field>
+    </record>
+    <record id="prep_scrap_tomato_1b" model="aifa.prep.scrap">
+        <field name="prep_log_id" ref="prep_log_tomato_1"/>
+        <field name="cause">reject</field>
+        <field name="weight_kg">26.0</field>
+        <field name="destination">compost</field>
+    </record>
+
+    <!-- ===================== Worked dehydration runs ===================== -->
+    <!-- A clean run, released to packing. -->
+    <record id="run_pine_1" model="aifa.dehydration.run">
+        <field name="dehydrator_id" ref="dryer_td01"/>
+        <field name="crop_id" ref="aifa_base.crop_pineapple"/>
+        <field name="prep_log_ids" eval="[(6, 0, [ref('prep_log_pine_1')])]"/>
+        <field name="load_datetime" eval="(DateTime.now() - relativedelta(days=5, hours=2)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="unload_datetime" eval="(DateTime.now() - relativedelta(days=4, hours=10)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="tray_count">118</field>
+        <field name="wet_weight_kg">468.0</field>
+        <field name="dry_weight_kg">80.9</field>
+        <field name="target_temp_c">62.0</field>
+        <field name="avg_temp_c">61.4</field>
+        <field name="max_temp_c">64.8</field>
+        <field name="ambient_rh_pct">38.0</field>
+        <field name="moisture_out_pct">13.1</field>
+        <field name="water_activity">0.57</field>
+        <field name="energy_kwh">372.0</field>
+        <field name="energy_source">grid</field>
+        <field name="labour_hours">6.5</field>
+        <field name="wip_lot_code">LOT-DRY-PINE-DEMO-00001</field>
+        <field name="state">released</field>
+    </record>
+
+    <!-- A run that failed the water-activity gate and sits in quarantine. -->
+    <record id="run_mango_1" model="aifa.dehydration.run">
+        <field name="dehydrator_id" ref="dryer_td02"/>
+        <field name="crop_id" ref="aifa_base.crop_mango"/>
+        <field name="prep_log_ids" eval="[(6, 0, [ref('prep_log_mango_1')])]"/>
+        <field name="load_datetime" eval="(DateTime.now() - relativedelta(days=3, hours=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="unload_datetime" eval="(DateTime.now() - relativedelta(days=2, hours=9)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="tray_count">120</field>
+        <field name="wet_weight_kg">476.0</field>
+        <field name="dry_weight_kg">101.2</field>
+        <field name="target_temp_c">60.0</field>
+        <field name="avg_temp_c">56.2</field>
+        <field name="max_temp_c">61.0</field>
+        <field name="ambient_rh_pct">61.0</field>
+        <field name="moisture_out_pct">17.4</field>
+        <field name="water_activity">0.68</field>
+        <field name="energy_kwh">401.0</field>
+        <field name="labour_hours">7.0</field>
+        <field name="wip_lot_code">LOT-DRY-MANG-DEMO-00002</field>
+        <field name="qa_blocked" eval="True"/>
+        <field name="qa_note">Blocked: moisture 17.40% exceeds the 15.00% limit; water activity 0.680 exceeds the 0.600 limit.</field>
+        <field name="state">quarantine</field>
+        <field name="note">High ambient humidity during the night tail and a chamber loaded to 100% of rating. Candidate for re-drying.</field>
+    </record>
+
+    <!-- Second mango load, same day, correctly dried. -->
+    <record id="run_mango_2" model="aifa.dehydration.run">
+        <field name="dehydrator_id" ref="dryer_td01"/>
+        <field name="crop_id" ref="aifa_base.crop_mango"/>
+        <field name="load_datetime" eval="(DateTime.now() - relativedelta(days=2, hours=4)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="unload_datetime" eval="(DateTime.now() - relativedelta(days=1, hours=13)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="tray_count">100</field>
+        <field name="wet_weight_kg">268.0</field>
+        <field name="dry_weight_kg">54.4</field>
+        <field name="target_temp_c">60.0</field>
+        <field name="avg_temp_c">59.6</field>
+        <field name="max_temp_c">62.1</field>
+        <field name="moisture_out_pct">14.2</field>
+        <field name="water_activity">0.58</field>
+        <field name="energy_kwh">245.0</field>
+        <field name="wip_lot_code">LOT-DRY-MANG-DEMO-00003</field>
+        <field name="state">released</field>
+    </record>
+
+    <!-- Tomato run currently in the chamber. -->
+    <record id="run_tomato_1" model="aifa.dehydration.run">
+        <field name="dehydrator_id" ref="dryer_cd01"/>
+        <field name="crop_id" ref="aifa_base.crop_tomato"/>
+        <field name="prep_log_ids" eval="[(6, 0, [ref('prep_log_tomato_1')])]"/>
+        <field name="load_datetime" eval="(DateTime.now() - relativedelta(hours=9)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="tray_count">58</field>
+        <field name="wet_weight_kg">172.0</field>
+        <field name="target_temp_c">58.0</field>
+        <field name="avg_temp_c">57.4</field>
+        <field name="ambient_rh_pct">44.0</field>
+        <field name="state">running</field>
+    </record>
+
+</odoo>

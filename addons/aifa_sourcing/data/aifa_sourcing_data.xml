@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Activity type used when a gate inspection flags a consignment. -->
+        <record id="mail_act_intake_review" model="mail.activity.type">
+            <field name="name">Intake Quality Review</field>
+            <field name="icon">fa-exclamation-triangle</field>
+            <field name="delay_count">1</field>
+            <field name="delay_unit">days</field>
+            <field name="res_model">aifa.intake.batch</field>
+            <field name="summary">Review flagged intake consignment</field>
+        </record>
+    </data>
+</odoo>

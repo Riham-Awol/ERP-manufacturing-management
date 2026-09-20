@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_mrp_production_form_aifa" model="ir.ui.view">
+        <field name="name">mrp.production.form.aifa</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_aifa_prep_logs" type="object"
+                        class="oe_stat_button" icon="fa-cutlery"
+                        invisible="aifa_stage != 'prep'">
+                    <field name="aifa_prep_log_count" widget="statinfo" string="Prep Logs"/>
+                </button>
+                <button name="action_view_aifa_runs" type="object"
+                        class="oe_stat_button" icon="fa-fire"
+                        invisible="aifa_stage not in ('dry','condition')">
+                    <field name="aifa_run_count" widget="statinfo" string="Dryer Runs"/>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='bom_id']" position="after">
+                <field name="aifa_stage"/>
+                <field name="aifa_crop_id"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Agro Yield" name="aifa_yield" invisible="not aifa_stage">
+                    <group>
+                        <group string="Stage Mass Balance">
+                            <field name="aifa_input_kg"/>
+                            <field name="aifa_output_kg"/>
+                            <field name="aifa_yield_pct"/>
+                        </group>
+                        <group string="Energy">
+                            <field name="aifa_energy_kwh"/>
+                        </group>
+                    </group>
+                    <field name="aifa_prep_log_ids" invisible="aifa_stage != 'prep'" readonly="1">
+                        <tree>
+                            <field name="date"/>
+                            <field name="shift"/>
+                            <field name="raw_input_kg" sum="Raw kg"/>
+                            <field name="prepped_output_kg" sum="Prepped kg"/>
+                            <field name="actual_yield_pct"/>
+                            <field name="variance_flag" widget="badge"/>
+                            <field name="state"/>
+                        </tree>
+                    </field>
+                    <field name="aifa_run_ids" invisible="aifa_stage not in ('dry','condition')"
+                           readonly="1">
+                        <tree>
+                            <field name="name"/>
+                            <field name="dehydrator_id"/>
+                            <field name="wet_weight_kg" sum="Wet kg"/>
+                            <field name="dry_weight_kg" sum="Dry kg"/>
+                            <field name="actual_yield_pct"/>
+                            <field name="moisture_out_pct"/>
+                            <field name="water_activity"/>
+                            <field name="energy_kwh" sum="kWh"/>
+                            <field name="state" widget="badge"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_mrp_production_tree_aifa" model="ir.ui.view">
+        <field name="name">mrp.production.tree.aifa</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_tree_view"/>
+        <field name="arch" type="xml">
+            <field name="product_id" position="after">
+                <field name="aifa_stage" optional="show"/>
+                <field name="aifa_crop_id" optional="hide"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="action_aifa_production_prep" model="ir.actions.act_window">
+        <field name="name">Preparation Orders</field>
+        <field name="res_model">mrp.production</field>
+        <field name="view_mode">tree,kanban,form,calendar,pivot,graph</field>
+        <field name="domain">[('aifa_stage','=','prep')]</field>
+        <field name="context">{'default_aifa_stage': 'prep'}</field>
+    </record>
+
+    <record id="action_aifa_production_dry" model="ir.actions.act_window">
+        <field name="name">Dehydration Orders</field>
+        <field name="res_model">mrp.production</field>
+        <field name="view_mode">tree,kanban,form,calendar,pivot,graph</field>
+        <field name="domain">[('aifa_stage','=','dry')]</field>
+        <field name="context">{'default_aifa_stage': 'dry'}</field>
+    </record>
+
+    <record id="action_aifa_production_pack" model="ir.actions.act_window">
+        <field name="name">Packing Orders</field>
+        <field name="res_model">mrp.production</field>
+        <field name="view_mode">tree,kanban,form,calendar,pivot,graph</field>
+        <field name="domain">[('aifa_stage','=','pack')]</field>
+        <field name="context">{'default_aifa_stage': 'pack'}</field>
+    </record>
+
+</odoo>

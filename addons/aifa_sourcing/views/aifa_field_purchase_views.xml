@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_aifa_field_purchase_tree" model="ir.ui.view">
+        <field name="name">aifa.field.purchase.tree</field>
+        <field name="model">aifa.field.purchase</field>
+        <field name="arch" type="xml">
+            <tree string="Field Purchases" decoration-info="state == 'draft'"
+                  decoration-muted="state == 'cancel'" decoration-success="state == 'done'">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="centre_id"/>
+                <field name="region_id" optional="show"/>
+                <field name="agent_id"/>
+                <field name="total_weight_kg" sum="kg"/>
+                <field name="amount_total" sum="Value"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="captured_offline" string="Offline" optional="show" widget="boolean_toggle"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'done'" decoration-info="state == 'confirmed'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_aifa_field_purchase_form" model="ir.ui.view">
+        <field name="name">aifa.field.purchase.form</field>
+        <field name="model">aifa.field.purchase</field>
+        <field name="arch" type="xml">
+            <form string="Field Purchase Order">
+                <header>
+                    <button name="action_confirm" type="object" string="Confirm Weighing"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_dispatch" type="object" string="Dispatch Truck"
+                            class="btn-primary" invisible="state != 'confirmed'"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('done','cancel')"/>
+                    <button name="action_draft" type="object" string="Reset to Draft"
+                            invisible="state != 'cancel'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,confirmed,dispatched,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_intakes" type="object"
+                                class="oe_stat_button" icon="fa-cubes">
+                            <field name="intake_count" widget="statinfo" string="Intake Batches"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Synced Offline" bg_color="text-bg-info"
+                            invisible="not captured_offline"/>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="centre_id"/>
+                            <field name="region_id"/>
+                            <field name="agent_id"/>
+                        </group>
+                        <group>
+                            <field name="total_weight_kg"/>
+                            <field name="amount_total"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="captured_offline" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Weighing Lines" name="lines">
+                            <field name="line_ids">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="farmer_id"/>
+                                    <field name="crop_id"/>
+                                    <field name="variety_id" optional="hide"/>
+                                    <field name="plot_id" optional="hide"/>
+                                    <field name="grade"/>
+                                    <field name="gross_weight_kg" sum="Gross kg"/>
+                                    <field name="crate_count"/>
+                                    <field name="crate_tare_kg" optional="hide"/>
+                                    <field name="net_weight_kg" sum="Net kg"/>
+                                    <field name="brix" optional="show"/>
+                                    <field name="price_per_kg"/>
+                                    <field name="subtotal" sum="Total"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="scale_serial" optional="hide"/>
+                                    <field name="scale_verified" optional="hide"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Transport Manifest" name="transport">
+                            <group>
+                                <group>
+                                    <field name="truck_plate"/>
+                                    <field name="driver_name"/>
+                                    <field name="driver_phone"/>
+                                </group>
+                                <group>
+                                    <field name="dispatch_datetime"/>
+                                    <field name="transit_tare_kg"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Sync Metadata" name="sync"
+                              invisible="not captured_offline">
+                            <group>
+                                <group>
+                                    <field name="client_ref"/>
+                                    <field name="device_id"/>
+                                    <field name="synced_at"/>
+                                </group>
+                                <group>
+                                    <field name="gps_lat"/>
+                                    <field name="gps_lng"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_aifa_field_purchase" model="ir.actions.act_window">
+        <field name="name">Field Purchases</field>
+        <field name="res_model">aifa.field.purchase</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Record a depot buying session</p>
+            <p>One field purchase = one buying session at one collection centre.
+               Confirming it generates a traceable intake batch per farmer line.
+               The same document arrives automatically when the offline tablet
+               replays its queue.</p>
+        </field>
+    </record>
+
+</odoo>

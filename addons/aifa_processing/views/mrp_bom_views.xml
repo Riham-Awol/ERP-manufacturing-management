@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_mrp_bom_form_aifa" model="ir.ui.view">
+        <field name="name">mrp.bom.form.aifa</field>
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_qty']" position="after">
+                <field name="aifa_stage"/>
+                <field name="aifa_crop_id"/>
+                <field name="aifa_version"/>
+                <field name="aifa_expected_yield_pct"
+                       invisible="not aifa_stage"/>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button name="action_approve_recipe" type="object"
+                        string="Approve Recipe Version"
+                        invisible="not aifa_stage"
+                        groups="aifa_base.group_aifa_qa_manager"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Engineering Change" name="aifa_ecn" invisible="not aifa_stage">
+                    <group>
+                        <group>
+                            <field name="aifa_approved_by" readonly="1"/>
+                            <field name="aifa_approved_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <field name="aifa_change_note"
+                           placeholder="Why does this version differ? Seasonal sugar content, new cultivar, packaging change..."/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_mrp_bom_tree_aifa" model="ir.ui.view">
+        <field name="name">mrp.bom.tree.aifa</field>
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_tree_view"/>
+        <field name="arch" type="xml">
+            <field name="product_tmpl_id" position="after">
+                <field name="aifa_stage" optional="show"/>
+                <field name="aifa_crop_id" optional="show"/>
+                <field name="aifa_version" optional="hide"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_mrp_bom_line_aifa" model="ir.ui.view">
+        <field name="name">mrp.bom.line.aifa</field>
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='bom_line_ids']/tree/field[@name='product_qty']"
+                   position="after">
+                <field name="aifa_is_primary" optional="show" string="Primary"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

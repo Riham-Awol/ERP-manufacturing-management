@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_aifa_payout_tree" model="ir.ui.view">
+        <field name="name">aifa.farmer.payout.tree</field>
+        <field name="model">aifa.farmer.payout</field>
+        <field name="arch" type="xml">
+            <tree string="Outgrower Payouts" decoration-success="state == 'paid'"
+                  decoration-muted="state == 'cancel'">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="farmer_id"/>
+                <field name="total_kg" sum="kg"/>
+                <field name="gross_amount" sum="Gross"/>
+                <field name="advance_deduction" sum="Advance" optional="show"/>
+                <field name="crate_deduction" sum="Crates" optional="hide"/>
+                <field name="net_amount" sum="Net"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="payout_method"/>
+                <field name="transaction_ref" optional="show"/>
+                <field name="state" widget="badge" decoration-success="state == 'paid'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_aifa_payout_form" model="ir.ui.view">
+        <field name="name">aifa.farmer.payout.form</field>
+        <field name="model">aifa.farmer.payout</field>
+        <field name="arch" type="xml">
+            <form string="Outgrower Payout">
+                <header>
+                    <button name="action_collect_intakes" type="object"
+                            string="Collect Unpaid Intakes" class="btn-secondary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_approve" type="object" string="Approve"
+                            class="btn-primary" invisible="state != 'draft'"
+                            groups="aifa_base.group_aifa_finance"/>
+                    <button name="action_export_wallet_file" type="object"
+                            string="Export Wallet File" invisible="state != 'approved'"/>
+                    <button name="action_mark_paid" type="object" string="Mark Paid"
+                            class="btn-primary" invisible="state != 'approved'"
+                            groups="aifa_base.group_aifa_finance"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('paid','cancel')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,approved,paid"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="farmer_id"/>
+                            <field name="partner_id"/>
+                            <field name="date"/>
+                            <field name="period_start"/>
+                            <field name="period_end"/>
+                        </group>
+                        <group>
+                            <field name="payout_method"/>
+                            <field name="wallet_number"/>
+                            <field name="transaction_ref"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <field name="intake_ids" readonly="1">
+                        <tree>
+                            <field name="intake_date"/>
+                            <field name="lot_number"/>
+                            <field name="crop_id"/>
+                            <field name="accepted_weight_kg" sum="kg"/>
+                            <field name="gate_grade"/>
+                            <field name="price_per_kg"/>
+                            <field name="amount_total" sum="Value"/>
+                            <field name="currency_id" column_invisible="1"/>
+                        </tree>
+                    </field>
+                    <group class="oe_subtotal_footer">
+                        <field name="total_kg"/>
+                        <field name="gross_amount"/>
+                        <field name="advance_deduction"/>
+                        <field name="crate_deduction"/>
+                        <field name="other_deduction"/>
+                        <field name="net_amount" class="oe_subtotal_footer_separator"/>
+                    </group>
+                    <field name="other_deduction_note" placeholder="Reason for other deduction"
+                           invisible="other_deduction == 0"/>
+                    <field name="note" placeholder="Internal notes"/>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_aifa_payout" model="ir.actions.act_window">
+        <field name="name">Outgrower Payouts</field>
+        <field name="res_model">aifa.farmer.payout</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a payout</p>
+            <p>Collect the farmer's unpaid accepted intakes, net off input advances
+               and crate deposits, approve, then export a bulk Telebirr / CBE Birr
+               file.</p>
+        </field>
+    </record>
+
+</odoo>

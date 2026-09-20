@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_aifa_field_purchase" name="Field Purchases"
+              parent="aifa_base.menu_aifa_sourcing"
+              action="action_aifa_field_purchase" sequence="10"
+              groups="aifa_base.group_aifa_field_agent,aifa_base.group_aifa_manager"/>
+
+    <menuitem id="menu_aifa_intake_batch" name="Raw Intake Batches"
+              parent="aifa_base.menu_aifa_sourcing"
+              action="action_aifa_intake_batch" sequence="20"/>
+
+    <menuitem id="menu_aifa_intake_to_inspect" name="Awaiting Gate Inspection"
+              parent="aifa_base.menu_aifa_sourcing"
+              action="action_aifa_intake_to_inspect" sequence="30"
+              groups="aifa_base.group_aifa_receiving"/>
+
+    <menuitem id="menu_aifa_farmer" name="Outgrowers"
+              parent="aifa_base.menu_aifa_sourcing"
+              action="action_aifa_farmer" sequence="40"/>
+
+    <menuitem id="menu_aifa_payout" name="Outgrower Payouts"
+              parent="aifa_base.menu_aifa_sourcing"
+              action="action_aifa_payout" sequence="50"
+              groups="aifa_base.group_aifa_finance,aifa_base.group_aifa_manager"/>
+
+    <menuitem id="menu_aifa_cooperative" name="Cooperatives"
+              parent="aifa_base.menu_aifa_config_master"
+              action="action_aifa_cooperative" sequence="30"/>
+
+    <menuitem id="menu_aifa_grade_price" name="Farm Gate Prices"
+              parent="aifa_base.menu_aifa_config_master"
+              action="action_aifa_grade_price" sequence="40"/>
+
+</odoo>

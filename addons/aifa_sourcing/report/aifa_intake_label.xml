@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_intake_label" model="ir.actions.report">
+        <field name="name">Raw Intake Crate Label</field>
+        <field name="model">aifa.intake.batch</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">aifa_sourcing.report_intake_label</field>
+        <field name="report_file">aifa_sourcing.report_intake_label</field>
+        <field name="print_report_name">'Label - %s' % (object.lot_number or object.name)</field>
+        <field name="binding_model_id" ref="model_aifa_intake_batch"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+
+    <template id="report_intake_label">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="doc">
+                <div class="page" style="font-family: Arial, sans-serif;">
+                    <div style="border: 3px solid #000; padding: 12px; margin-bottom: 8px;">
+                        <table style="width:100%;">
+                            <tr>
+                                <td style="width:65%; vertical-align: top;">
+                                    <div style="font-size: 26px; font-weight: bold;">AIFA FOODS</div>
+                                    <div style="font-size: 12px; color:#555;">Yarashoo Agro Industry PLC &#8212; Raw Intake</div>
+                                    <div style="margin-top:10px; font-size: 20px; font-weight: bold;">
+                                        <span t-field="doc.lot_number"/>
+                                    </div>
+                                    <table style="margin-top:10px; font-size: 13px;">
+                                        <tr><td style="padding-right:10px;"><b>Crop</b></td>
+                                            <td><span t-field="doc.crop_id"/>
+                                                <span t-if="doc.variety_id"> / <span t-field="doc.variety_id"/></span></td></tr>
+                                        <tr><td><b>Outgrower</b></td>
+                                            <td><span t-field="doc.farmer_id.name"/>
+                                                (<span t-field="doc.farmer_id.ref"/>)</td></tr>
+                                        <tr><td><b>Origin</b></td>
+                                            <td><span t-field="doc.centre_id.name"/>,
+                                                <span t-field="doc.region_id.name"/></td></tr>
+                                        <tr><td><b>Intake date</b></td>
+                                            <td><span t-field="doc.intake_date"/></td></tr>
+                                        <tr><td><b>Net / Accepted</b></td>
+                                            <td><span t-field="doc.net_weight_kg"/> kg /
+                                                <b><span t-field="doc.accepted_weight_kg"/> kg</b></td></tr>
+                                        <tr><td><b>Grade</b></td>
+                                            <td><span t-field="doc.gate_grade"/>
+                                                <span t-if="not doc.gate_grade" t-field="doc.field_grade"/></td></tr>
+                                        <tr><td><b>Brix</b></td>
+                                            <td><span t-field="doc.brix"/></td></tr>
+                                    </table>
+                                </td>
+                                <td style="width:35%; text-align:center; vertical-align: top;">
+                                    <div t-if="doc.lot_number">
+                                        <img t-att-src="'/report/barcode/?barcode_type=QR&amp;value=%s&amp;width=200&amp;height=200' % doc.lot_number"
+                                             style="width:170px;height:170px;"/>
+                                        <div style="font-size:10px; margin-top:4px;">Scan for full genealogy</div>
+                                    </div>
+                                    <div t-if="doc.lot_number" style="margin-top:8px;">
+                                        <img t-att-src="'/report/barcode/?barcode_type=Code128&amp;value=%s&amp;width=460&amp;height=90' % doc.lot_number"
+                                             style="width:220px;height:45px;"/>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <div style="margin-top:10px; border-top:1px dashed #999; padding-top:6px; font-size:11px;">
+                            Keep the crate under cold storage. Do not mix lots on a single pallet.
+                            EFDA traceability record &#8212; retain until batch expiry + 12 months.
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

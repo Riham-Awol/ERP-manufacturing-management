@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================== Cooperatives ===================== -->
+    <record id="coop_gamo_women" model="aifa.cooperative">
+        <field name="name">Gamo Women Fruit Growers Union</field>
+        <field name="code">GMAWFG</field>
+        <field name="region_id" ref="aifa_base.region_gamo"/>
+        <field name="centre_id" ref="aifa_base.centre_arbaminch"/>
+        <field name="chairperson">Almaz Dea</field>
+        <field name="phone">+251 91 200 0011</field>
+    </record>
+    <record id="coop_sidama_mango" model="aifa.cooperative">
+        <field name="name">Yirgalem Mango Growers Cooperative</field>
+        <field name="code">SIDMNG</field>
+        <field name="region_id" ref="aifa_base.region_sidama"/>
+        <field name="centre_id" ref="aifa_base.centre_yirgalem"/>
+        <field name="chairperson">Tesfaye Bekele</field>
+    </record>
+    <record id="coop_rift_tomato" model="aifa.cooperative">
+        <field name="name">Ziway Horticulture Producers</field>
+        <field name="code">RVLTOM</field>
+        <field name="region_id" ref="aifa_base.region_rift"/>
+        <field name="centre_id" ref="aifa_base.centre_ziway"/>
+    </record>
+
+    <!-- ===================== Outgrowers ===================== -->
+    <record id="farmer_almaz" model="aifa.farmer">
+        <field name="name">Almaz Dea</field>
+        <field name="cooperative_id" ref="coop_gamo_women"/>
+        <field name="region_id" ref="aifa_base.region_gamo"/>
+        <field name="centre_id" ref="aifa_base.centre_arbaminch"/>
+        <field name="kebele">Chano Mille</field>
+        <field name="gender">female</field>
+        <field name="household_size">6</field>
+        <field name="phone">+251 91 200 0011</field>
+        <field name="payout_method">telebirr</field>
+        <field name="wallet_number">251912000011</field>
+        <field name="crop_ids" eval="[(6, 0, [ref('aifa_base.crop_pineapple')])]"/>
+        <field name="certification">organic_conv</field>
+        <field name="advance_balance">1800.0</field>
+        <field name="crate_balance">12</field>
+    </record>
+    <record id="plot_almaz_1" model="aifa.farmer.plot">
+        <field name="name">Chano Pineapple Plot</field>
+        <field name="farmer_id" ref="farmer_almaz"/>
+        <field name="crop_id" ref="aifa_base.crop_pineapple"/>
+        <field name="variety_id" ref="aifa_base.variety_pine_cayenne"/>
+        <field name="hectares">0.5</field>
+        <field name="tree_count">18000</field>
+        <field name="gps_lat">6.041200</field>
+        <field name="gps_lng">37.561900</field>
+        <field name="soil_type">volcanic</field>
+        <field name="expected_yield_kg">9000</field>
+        <field name="planting_year">2023</field>
+    </record>
+
+    <record id="farmer_bekelech" model="aifa.farmer">
+        <field name="name">Bekelech Tadesse</field>
+        <field name="cooperative_id" ref="coop_gamo_women"/>
+        <field name="region_id" ref="aifa_base.region_gamo"/>
+        <field name="centre_id" ref="aifa_base.centre_chencha"/>
+        <field name="kebele">Chencha 02</field>
+        <field name="gender">female</field>
+        <field name="household_size">4</field>
+        <field name="payout_method">cbebirr</field>
+        <field name="wallet_number">1000234567890</field>
+        <field name="crop_ids" eval="[(6, 0, [ref('aifa_base.crop_pineapple')])]"/>
+    </record>
+    <record id="plot_bekelech_1" model="aifa.farmer.plot">
+        <field name="name">Chencha Upper Plot</field>
+        <field name="farmer_id" ref="farmer_bekelech"/>
+        <field name="crop_id" ref="aifa_base.crop_pineapple"/>
+        <field name="variety_id" ref="aifa_base.variety_pine_victoria"/>
+        <field name="hectares">0.3</field>
+        <field name="expected_yield_kg">5200</field>
+    </record>
+
+    <record id="farmer_tesfaye" model="aifa.farmer">
+        <field name="name">Tesfaye Bekele</field>
+        <field name="cooperative_id" ref="coop_sidama_mango"/>
+        <field name="region_id" ref="aifa_base.region_sidama"/>
+        <field name="centre_id" ref="aifa_base.centre_yirgalem"/>
+        <field name="gender">male</field>
+        <field name="payout_method">telebirr</field>
+        <field name="wallet_number">251911445566</field>
+        <field name="crop_ids" eval="[(6, 0, [ref('aifa_base.crop_mango')])]"/>
+    </record>
+    <record id="plot_tesfaye_1" model="aifa.farmer.plot">
+        <field name="name">Yirgalem Mango Orchard</field>
+        <field name="farmer_id" ref="farmer_tesfaye"/>
+        <field name="crop_id" ref="aifa_base.crop_mango"/>
+        <field name="variety_id" ref="aifa_base.variety_mango_apple"/>
+        <field name="hectares">1.2</field>
+        <field name="tree_count">120</field>
+        <field name="irrigated" eval="True"/>
+        <field name="expected_yield_kg">14000</field>
+    </record>
+
+    <record id="farmer_meseret" model="aifa.farmer">
+        <field name="name">Meseret Girma</field>
+        <field name="cooperative_id" ref="coop_sidama_mango"/>
+        <field name="region_id" ref="aifa_base.region_sidama"/>
+        <field name="centre_id" ref="aifa_base.centre_yirgalem"/>
+        <field name="gender">female</field>
+        <field name="payout_method">telebirr</field>
+        <field name="wallet_number">251913778899</field>
+        <field name="crop_ids" eval="[(6, 0, [ref('aifa_base.crop_mango')])]"/>
+        <field name="certification">organic</field>
+    </record>
+
+    <record id="farmer_hawa" model="aifa.farmer">
+        <field name="name">Hawa Ahmed</field>
+        <field name="region_id" ref="aifa_base.region_afar"/>
+        <field name="centre_id" ref="aifa_base.centre_awash"/>
+        <field name="gender">female</field>
+        <field name="payout_method">cash</field>
+        <field name="crop_ids" eval="[(6, 0, [ref('aifa_base.crop_mango'), ref('aifa_base.crop_tomato')])]"/>
+    </record>
+
+    <record id="farmer_girma" model="aifa.farmer">
+        <field name="name">Girma Wolde</field>
+        <field name="cooperative_id" ref="coop_rift_tomato"/>
+        <field name="region_id" ref="aifa_base.region_rift"/>
+        <field name="centre_id" ref="aifa_base.centre_ziway"/>
+        <field name="gender">male</field>
+        <field name="payout_method">bank</field>
+        <field name="wallet_number">1000987654321</field>
+        <field name="crop_ids" eval="[(6, 0, [ref('aifa_base.crop_tomato')])]"/>
+    </record>
+    <record id="plot_girma_1" model="aifa.farmer.plot">
+        <field name="name">Ziway Irrigated Tomato Block</field>
+        <field name="farmer_id" ref="farmer_girma"/>
+        <field name="crop_id" ref="aifa_base.crop_tomato"/>
+        <field name="variety_id" ref="aifa_base.variety_tomato_plum"/>
+        <field name="hectares">2.0</field>
+        <field name="irrigated" eval="True"/>
+        <field name="expected_yield_kg">60000</field>
+    </record>
+
+    <!-- ===================== Grade price matrix ===================== -->
+    <record id="price_pine_a" model="aifa.grade.price">
+        <field name="crop_id" ref="aifa_base.crop_pineapple"/>
+        <field name="grade">a</field>
+        <field name="price_per_kg">24.0</field>
+        <field name="crate_deposit">120.0</field>
+        <field name="date_start" eval="(DateTime.today() - relativedelta(months=6)).strftime('%Y-%m-%d')"/>
+    </record>
+    <record id="price_pine_b" model="aifa.grade.price">
+        <field name="crop_id" ref="aifa_base.crop_pineapple"/>
+        <field name="grade">b</field>
+        <field name="price_per_kg">19.0</field>
+        <field name="date_start" eval="(DateTime.today() - relativedelta(months=6)).strftime('%Y-%m-%d')"/>
+    </record>
+    <record id="price_pine_c" model="aifa.grade.price">
+        <field name="crop_id" ref="aifa_base.crop_pineapple"/>
+        <field name="grade">c</field>
+        <field name="price_per_kg">11.0</field>
+        <field name="date_start" eval="(DateTime.today() - relativedelta(months=6)).strftime('%Y-%m-%d')"/>
+        <field name="note">Salvage price; Grade C is diverted to juice or compost, never to drying.</field>
+    </record>
+    <record id="price_mango_a" model="aifa.grade.price">
+        <field name="crop_id" ref="aifa_base.crop_mango"/>
+        <field name="grade">a</field>
+        <field name="price_per_kg">27.0</field>
+        <field name="date_start" eval="(DateTime.today() - relativedelta(months=6)).strftime('%Y-%m-%d')"/>
+    </record>
+    <record id="price_mango_b" model="aifa.grade.price">
+        <field name="crop_id" ref="aifa_base.crop_mango"/>
+        <field name="grade">b</field>
+        <field name="price_per_kg">21.5</field>
+        <field name="date_start" eval="(DateTime.today() - relativedelta(months=6)).strftime('%Y-%m-%d')"/>
+    </record>
+    <record id="price_mango_c" model="aifa.grade.price">
+        <field name="crop_id" ref="aifa_base.crop_mango"/>
+        <field name="grade">c</field>
+        <field name="price_per_kg">12.0</field>
+        <field name="date_start" eval="(DateTime.today() - relativedelta(months=6)).strftime('%Y-%m-%d')"/>
+    </record>
+    <record id="price_mango_a_afar" model="aifa.grade.price">
+        <field name="crop_id" ref="aifa_base.crop_mango"/>
+        <field name="region_id" ref="aifa_base.region_afar"/>
+        <field name="grade">a</field>
+        <field name="price_per_kg">25.0</field>
+        <field name="date_start" eval="(DateTime.today() - relativedelta(months=6)).strftime('%Y-%m-%d')"/>
+        <field name="note">Counter-seasonal Afar supply; lower gate price offsets the longer haul.</field>
+    </record>
+    <record id="price_tomato_a" model="aifa.grade.price">
+        <field name="crop_id" ref="aifa_base.crop_tomato"/>
+        <field name="grade">a</field>
+        <field name="price_per_kg">15.0</field>
+        <field name="date_start" eval="(DateTime.today() - relativedelta(months=6)).strftime('%Y-%m-%d')"/>
+    </record>
+    <record id="price_tomato_b" model="aifa.grade.price">
+        <field name="crop_id" ref="aifa_base.crop_tomato"/>
+        <field name="grade">b</field>
+        <field name="price_per_kg">11.0</field>
+        <field name="date_start" eval="(DateTime.today() - relativedelta(months=6)).strftime('%Y-%m-%d')"/>
+    </record>
+    <record id="price_tomato_c" model="aifa.grade.price">
+        <field name="crop_id" ref="aifa_base.crop_tomato"/>
+        <field name="grade">c</field>
+        <field name="price_per_kg">6.0</field>
+        <field name="date_start" eval="(DateTime.today() - relativedelta(months=6)).strftime('%Y-%m-%d')"/>
+    </record>
+
+    <!-- ===================== A worked field purchase ===================== -->
+    <record id="fpo_demo_1" model="aifa.field.purchase">
+        <field name="date" eval="(DateTime.today() - relativedelta(days=6)).strftime('%Y-%m-%d')"/>
+        <field name="centre_id" ref="aifa_base.centre_arbaminch"/>
+        <field name="truck_plate">3-A12345 AA</field>
+        <field name="driver_name">Yonas Haile</field>
+        <field name="driver_phone">+251 91 555 1212</field>
+        <field name="captured_offline" eval="True"/>
+        <field name="client_ref">demo-uuid-8f2c-4a11-arba-0001</field>
+        <field name="device_id">TAB-AMC-01</field>
+        <field name="gps_lat">6.037100</field>
+        <field name="gps_lng">37.551200</field>
+    </record>
+    <record id="fpo_demo_1_l1" model="aifa.field.purchase.line">
+        <field name="purchase_id" ref="fpo_demo_1"/>
+        <field name="farmer_id" ref="farmer_almaz"/>
+        <field name="crop_id" ref="aifa_base.crop_pineapple"/>
+        <field name="variety_id" ref="aifa_base.variety_pine_cayenne"/>
+        <field name="plot_id" ref="plot_almaz_1"/>
+        <field name="grade">a</field>
+        <field name="gross_weight_kg">640.0</field>
+        <field name="crate_count">25</field>
+        <field name="brix">14.4</field>
+        <field name="price_per_kg">24.0</field>
+        <field name="scale_serial">SCL-AMC-02</field>
+        <field name="scale_verified" eval="True"/>
+    </record>
+    <record id="fpo_demo_1_l2" model="aifa.field.purchase.line">
+        <field name="purchase_id" ref="fpo_demo_1"/>
+        <field name="farmer_id" ref="farmer_bekelech"/>
+        <field name="crop_id" ref="aifa_base.crop_pineapple"/>
+        <field name="variety_id" ref="aifa_base.variety_pine_victoria"/>
+        <field name="grade">b</field>
+        <field name="gross_weight_kg">305.0</field>
+        <field name="crate_count">12</field>
+        <field name="brix">15.8</field>
+        <field name="price_per_kg">19.0</field>
+        <field name="scale_serial">SCL-AMC-02</field>
+        <field name="scale_verified" eval="True"/>
+    </record>
+
+    <record id="fpo_demo_2" model="aifa.field.purchase">
+        <field name="date" eval="(DateTime.today() - relativedelta(days=4)).strftime('%Y-%m-%d')"/>
+        <field name="centre_id" ref="aifa_base.centre_yirgalem"/>
+        <field name="truck_plate">3-B77120 AA</field>
+        <field name="driver_name">Abebe Kassa</field>
+    </record>
+    <record id="fpo_demo_2_l1" model="aifa.field.purchase.line">
+        <field name="purchase_id" ref="fpo_demo_2"/>
+        <field name="farmer_id" ref="farmer_tesfaye"/>
+        <field name="crop_id" ref="aifa_base.crop_mango"/>
+        <field name="variety_id" ref="aifa_base.variety_mango_apple"/>
+        <field name="plot_id" ref="plot_tesfaye_1"/>
+        <field name="grade">a</field>
+        <field name="gross_weight_kg">880.0</field>
+        <field name="crate_count">30</field>
+        <field name="brix">15.2</field>
+        <field name="price_per_kg">27.0</field>
+    </record>
+    <record id="fpo_demo_2_l2" model="aifa.field.purchase.line">
+        <field name="purchase_id" ref="fpo_demo_2"/>
+        <field name="farmer_id" ref="farmer_meseret"/>
+        <field name="crop_id" ref="aifa_base.crop_mango"/>
+        <field name="grade">a</field>
+        <field name="gross_weight_kg">420.0</field>
+        <field name="crate_count">16</field>
+        <field name="brix">14.9</field>
+        <field name="price_per_kg">27.0</field>
+    </record>
+
+    <record id="fpo_demo_3" model="aifa.field.purchase">
+        <field name="date" eval="(DateTime.today() - relativedelta(days=2)).strftime('%Y-%m-%d')"/>
+        <field name="centre_id" ref="aifa_base.centre_ziway"/>
+        <field name="truck_plate">3-C44003 AA</field>
+    </record>
+    <record id="fpo_demo_3_l1" model="aifa.field.purchase.line">
+        <field name="purchase_id" ref="fpo_demo_3"/>
+        <field name="farmer_id" ref="farmer_girma"/>
+        <field name="crop_id" ref="aifa_base.crop_tomato"/>
+        <field name="variety_id" ref="aifa_base.variety_tomato_plum"/>
+        <field name="plot_id" ref="plot_girma_1"/>
+        <field name="grade">a</field>
+        <field name="gross_weight_kg">1250.0</field>
+        <field name="crate_count">50</field>
+        <field name="brix">4.9</field>
+        <field name="price_per_kg">15.0</field>
+    </record>
+
+</odoo>

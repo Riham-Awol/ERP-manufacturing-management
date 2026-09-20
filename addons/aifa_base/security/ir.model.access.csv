@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_aifa_region_user,aifa.region user,model_aifa_region,base.group_user,1,0,0,0
+access_aifa_region_manager,aifa.region manager,model_aifa_region,aifa_base.group_aifa_manager,1,1,1,1
+access_aifa_collection_centre_user,aifa.collection.centre user,model_aifa_collection_centre,base.group_user,1,0,0,0
+access_aifa_collection_centre_agent,aifa.collection.centre agent,model_aifa_collection_centre,aifa_base.group_aifa_field_agent,1,1,0,0
+access_aifa_collection_centre_manager,aifa.collection.centre manager,model_aifa_collection_centre,aifa_base.group_aifa_manager,1,1,1,1
+access_aifa_crop_user,aifa.crop user,model_aifa_crop,base.group_user,1,0,0,0
+access_aifa_crop_qa,aifa.crop qa,model_aifa_crop,aifa_base.group_aifa_qa_manager,1,1,0,0
+access_aifa_crop_manager,aifa.crop manager,model_aifa_crop,aifa_base.group_aifa_manager,1,1,1,1
+access_aifa_crop_variety_user,aifa.crop.variety user,model_aifa_crop_variety,base.group_user,1,0,0,0
+access_aifa_crop_variety_manager,aifa.crop.variety manager,model_aifa_crop_variety,aifa_base.group_aifa_manager,1,1,1,1

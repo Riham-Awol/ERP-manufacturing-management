@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_aifa_prep_log_tree" model="ir.ui.view">
+        <field name="name">aifa.prep.log.tree</field>
+        <field name="model">aifa.prep.log</field>
+        <field name="arch" type="xml">
+            <tree string="Prep Logs" decoration-danger="variance_flag == 'low'"
+                  decoration-warning="variance_flag == 'high'"
+                  decoration-muted="state == 'cancel'">
+                <field name="date"/>
+                <field name="name"/>
+                <field name="shift"/>
+                <field name="crop_id"/>
+                <field name="raw_input_kg" sum="Raw kg"/>
+                <field name="prepped_output_kg" sum="Prepped kg"/>
+                <field name="scrap_total_kg" sum="Scrap kg"/>
+                <field name="unaccounted_kg" sum="Unaccounted"/>
+                <field name="actual_yield_pct"/>
+                <field name="standard_yield_pct" optional="hide"/>
+                <field name="yield_variance_pct"/>
+                <field name="variance_flag" widget="badge"
+                       decoration-success="variance_flag == 'ok'"
+                       decoration-danger="variance_flag == 'low'"/>
+                <field name="state" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_aifa_prep_log_form" model="ir.ui.view">
+        <field name="name">aifa.prep.log.form</field>
+        <field name="model">aifa.prep.log</field>
+        <field name="arch" type="xml">
+            <form string="Prep Log">
+                <header>
+                    <button name="action_confirm" type="object" string="Confirm"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state == 'cancel'"/>
+                    <button name="action_draft" type="object" string="Reset to Draft"
+                            invisible="state != 'cancel'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Shift">
+                            <field name="date"/>
+                            <field name="shift"/>
+                            <field name="crop_id"/>
+                            <field name="production_id"/>
+                            <field name="supervisor_id"/>
+                            <field name="operator_ids" widget="many2many_tags"/>
+                        </group>
+                        <group string="Source Lots">
+                            <field name="intake_batch_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <group string="Mass Balance">
+                        <group>
+                            <field name="raw_input_kg"/>
+                            <field name="prepped_output_kg"/>
+                            <field name="scrap_total_kg" readonly="1"/>
+                            <field name="unaccounted_kg" readonly="1"
+                                   decoration-danger="unaccounted_kg &gt; 1 or unaccounted_kg &lt; -1"/>
+                        </group>
+                        <group>
+                            <field name="actual_yield_pct"/>
+                            <field name="standard_yield_pct"/>
+                            <field name="yield_variance_pct"/>
+                            <field name="variance_flag"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Scrap Breakdown" name="scrap">
+                            <field name="scrap_line_ids">
+                                <tree editable="bottom">
+                                    <field name="cause"/>
+                                    <field name="weight_kg" sum="Total scrap"/>
+                                    <field name="share_pct"/>
+                                    <field name="destination"/>
+                                    <field name="note"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Process Parameters" name="process">
+                            <group>
+                                <group>
+                                    <field name="slice_thickness_mm"/>
+                                    <field name="pretreatment"/>
+                                </group>
+                                <group string="Wash Tank (CCP-1)">
+                                    <field name="wash_chlorine_ppm"/>
+                                    <field name="water_change_done"/>
+                                </group>
+                            </group>
+                            <field name="note" placeholder="Knife changes, blade wear, fruit ripeness observations..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_aifa_prep_log_pivot" model="ir.ui.view">
+        <field name="name">aifa.prep.log.pivot</field>
+        <field name="model">aifa.prep.log</field>
+        <field name="arch" type="xml">
+            <pivot string="Prep Yield Analysis" sample="1">
+                <field name="crop_id" type="row"/>
+                <field name="date" interval="week" type="col"/>
+                <field name="raw_input_kg" type="measure"/>
+                <field name="prepped_output_kg" type="measure"/>
+                <field name="actual_yield_pct" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_aifa_prep_log" model="ir.actions.act_window">
+        <field name="name">Prep Logs</field>
+        <field name="res_model">aifa.prep.log</field>
+        <field name="view_mode">tree,form,pivot</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Log a prep shift</p>
+            <p>Raw in, prepped out and scrap by cause. The log refuses to confirm
+               unless the three balance, which is what turns "about 2-5% is lost
+               somewhere" into a number you can act on.</p>
+        </field>
+    </record>
+
+    <record id="action_aifa_prep_scrap" model="ir.actions.act_window">
+        <field name="name">Scrap Analysis</field>
+        <field name="res_model">aifa.prep.scrap</field>
+        <field name="view_mode">tree,pivot</field>
+    </record>
+
+    <record id="view_aifa_prep_scrap_tree" model="ir.ui.view">
+        <field name="name">aifa.prep.scrap.tree</field>
+        <field name="model">aifa.prep.scrap</field>
+        <field name="arch" type="xml">
+            <tree string="Scrap" create="0">
+                <field name="prep_log_id"/>
+                <field name="cause"/>
+                <field name="weight_kg" sum="kg"/>
+                <field name="share_pct"/>
+                <field name="destination"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_aifa_prep_scrap_pivot" model="ir.ui.view">
+        <field name="name">aifa.prep.scrap.pivot</field>
+        <field name="model">aifa.prep.scrap</field>
+        <field name="arch" type="xml">
+            <pivot string="Scrap by Cause" sample="1">
+                <field name="cause" type="row"/>
+                <field name="destination" type="col"/>
+                <field name="weight_kg" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+</odoo>

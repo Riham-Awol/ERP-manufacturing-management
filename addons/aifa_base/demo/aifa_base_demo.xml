@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================= Product categories ================= -->
+    <record id="categ_aifa_raw" model="product.category">
+        <field name="name">Raw Fruit (Farm Gate)</field>
+        <field name="parent_id" ref="product.product_category_all"/>
+    </record>
+    <record id="categ_aifa_wip" model="product.category">
+        <field name="name">Work In Progress</field>
+        <field name="parent_id" ref="product.product_category_all"/>
+    </record>
+    <record id="categ_aifa_fg" model="product.category">
+        <field name="name">Finished Goods (Aifa Retail)</field>
+        <field name="parent_id" ref="product.product_category_all"/>
+    </record>
+    <record id="categ_aifa_pack" model="product.category">
+        <field name="name">Packaging Materials</field>
+        <field name="parent_id" ref="product.product_category_all"/>
+    </record>
+
+    <!-- ================= Raw fruit ================= -->
+    <record id="product_raw_pineapple" model="product.product">
+        <field name="name">Fresh Pineapple (Farm Gate)</field>
+        <field name="default_code">RAW-PINE</field>
+        <field name="type">product</field>
+        <field name="categ_id" ref="categ_aifa_raw"/>
+        <field name="uom_id" ref="uom.product_uom_kgm"/>
+        <field name="uom_po_id" ref="uom.product_uom_kgm"/>
+        <field name="tracking">lot</field>
+        <field name="use_expiration_date" eval="True"/>
+        <field name="expiration_time">5</field>
+        <field name="alert_time">2</field>
+        <field name="standard_price">22.0</field>
+    </record>
+    <record id="product_raw_mango" model="product.product">
+        <field name="name">Fresh Mango (Farm Gate)</field>
+        <field name="default_code">RAW-MANG</field>
+        <field name="type">product</field>
+        <field name="categ_id" ref="categ_aifa_raw"/>
+        <field name="uom_id" ref="uom.product_uom_kgm"/>
+        <field name="uom_po_id" ref="uom.product_uom_kgm"/>
+        <field name="tracking">lot</field>
+        <field name="use_expiration_date" eval="True"/>
+        <field name="expiration_time">6</field>
+        <field name="alert_time">2</field>
+        <field name="standard_price">25.0</field>
+    </record>
+    <record id="product_raw_tomato" model="product.product">
+        <field name="name">Fresh Plum Tomato (Farm Gate)</field>
+        <field name="default_code">RAW-TOMA</field>
+        <field name="type">product</field>
+        <field name="categ_id" ref="categ_aifa_raw"/>
+        <field name="uom_id" ref="uom.product_uom_kgm"/>
+        <field name="uom_po_id" ref="uom.product_uom_kgm"/>
+        <field name="tracking">lot</field>
+        <field name="use_expiration_date" eval="True"/>
+        <field name="expiration_time">4</field>
+        <field name="alert_time">1</field>
+        <field name="standard_price">14.0</field>
+    </record>
+
+    <!-- ================= Stage 1 : prepped WIP ================= -->
+    <record id="product_prep_pineapple" model="product.product">
+        <field name="name">Prepped Pineapple Slices (WIP)</field>
+        <field name="default_code">WIP-PREP-PINE</field>
+        <field name="type">product</field>
+        <field name="categ_id" ref="categ_aifa_wip"/>
+        <field name="uom_id" ref="uom.product_uom_kgm"/>
+        <field name="uom_po_id" ref="uom.product_uom_kgm"/>
+        <field name="tracking">lot</field>
+        <field name="use_expiration_date" eval="True"/>
+        <field name="expiration_time">2</field>
+    </record>
+    <record id="product_prep_mango" model="product.product">
+        <field name="name">Prepped Mango Strips (WIP)</field>
+        <field name="default_code">WIP-PREP-MANG</field>
+        <field name="type">product</field>
+        <field name="categ_id" ref="categ_aifa_wip"/>
+        <field name="uom_id" ref="uom.product_uom_kgm"/>
+        <field name="uom_po_id" ref="uom.product_uom_kgm"/>
+        <field name="tracking">lot</field>
+        <field name="use_expiration_date" eval="True"/>
+        <field name="expiration_time">2</field>
+    </record>
+    <record id="product_prep_tomato" model="product.product">
+        <field name="name">Prepped Tomato Halves (WIP)</field>
+        <field name="default_code">WIP-PREP-TOMA</field>
+        <field name="type">product</field>
+        <field name="categ_id" ref="categ_aifa_wip"/>
+        <field name="uom_id" ref="uom.product_uom_kgm"/>
+        <field name="uom_po_id" ref="uom.product_uom_kgm"/>
+        <field name="tracking">lot</field>
+        <field name="use_expiration_date" eval="True"/>
+        <field name="expiration_time">2</field>
+    </record>
+
+    <!-- ================= Stage 2 : dried bulk ================= -->
+    <record id="product_dry_pineapple" model="product.product">
+        <field name="name">Dried Pineapple - Bulk</field>
+        <field name="default_code">BULK-DRY-PINE</field>
+        <field name="type">product</field>
+        <field name="categ_id" ref="categ_aifa_wip"/>
+        <field name="uom_id" ref="uom.product_uom_kgm"/>
+        <field name="uom_po_id" ref="uom.product_uom_kgm"/>
+        <field name="tracking">lot</field>
+        <field name="use_expiration_date" eval="True"/>
+        <field name="expiration_time">365</field>
+        <field name="alert_time">60</field>
+    </record>
+    <record id="product_dry_mango" model="product.product">
+        <field name="name">Dried Mango - Bulk</field>
+        <field name="default_code">BULK-DRY-MANG</field>
+        <field name="type">product</field>
+        <field name="categ_id" ref="categ_aifa_wip"/>
+        <field name="uom_id" ref="uom.product_uom_kgm"/>
+        <field name="uom_po_id" ref="uom.product_uom_kgm"/>
+        <field name="tracking">lot</field>
+        <field name="use_expiration_date" eval="True"/>
+        <field name="expiration_time">365</field>
+        <field name="alert_time">60</field>
+    </record>
+    <record id="product_dry_tomato" model="product.product">
+        <field name="name">Dried Tomato - Bulk</field>
+        <field name="default_code">BULK-DRY-TOMA</field>
+        <field name="type">product</field>
+        <field name="categ_id" ref="categ_aifa_wip"/>
+        <field name="uom_id" ref="uom.product_uom_kgm"/>
+        <field name="uom_po_id" ref="uom.product_uom_kgm"/>
+        <field name="tracking">lot</field>
+        <field name="use_expiration_date" eval="True"/>
+        <field name="expiration_time">365</field>
+        <field name="alert_time">60</field>
+    </record>
+
+    <!-- ================= By-products ================= -->
+    <record id="product_scrap_organic" model="product.product">
+        <field name="name">Organic Prep Scrap (Peel / Core / Seed)</field>
+        <field name="default_code">SCRAP-ORG</field>
+        <field name="type">product</field>
+        <field name="categ_id" ref="categ_aifa_wip"/>
+        <field name="uom_id" ref="uom.product_uom_kgm"/>
+        <field name="uom_po_id" ref="uom.product_uom_kgm"/>
+    </record>
+
+    <!-- ================= Packaging ================= -->
+    <record id="product_pouch_35" model="product.product">
+        <field name="name">Barrier Foil Pouch 35g</field>
+        <field name="default_code">PKG-POUCH-35</field>
+        <field name="type">product</field>
+        <field name="categ_id" ref="categ_aifa_pack"/>
+        <field name="standard_price">3.1</field>
+    </record>
+    <record id="product_pouch_100" model="product.product">
+        <field name="name">Barrier Foil Pouch 100g</field>
+        <field name="default_code">PKG-POUCH-100</field>
+        <field name="type">product</field>
+        <field name="categ_id" ref="categ_aifa_pack"/>
+        <field name="standard_price">4.6</field>
+    </record>
+    <record id="product_o2_absorber" model="product.product">
+        <field name="name">Food-Grade Oxygen Absorber Sachet</field>
+        <field name="default_code">PKG-O2</field>
+        <field name="type">product</field>
+        <field name="categ_id" ref="categ_aifa_pack"/>
+        <field name="standard_price">0.9</field>
+    </record>
+    <record id="product_label" model="product.product">
+        <field name="name">GS1 Retail Label (thermal transfer)</field>
+        <field name="default_code">PKG-LABEL</field>
+        <field name="type">product</field>
+        <field name="categ_id" ref="categ_aifa_pack"/>
+        <field name="standard_price">0.45</field>
+    </record>
+    <record id="product_carton_24" model="product.product">
+        <field name="name">Master Corrugated Carton (24 units)</field>
+        <field name="default_code">PKG-CARTON-24</field>
+        <field name="type">product</field>
+        <field name="categ_id" ref="categ_aifa_pack"/>
+        <field name="standard_price">24.0</field>
+    </record>
+
+    <!-- ================= Finished retail SKUs ================= -->
+    <record id="product_fg_pine_35" model="product.product">
+        <field name="name">Aifa Dried Pineapple Slices 35g</field>
+        <field name="default_code">AIFA-PINE-35</field>
+        <field name="barcode">6009880000013</field>
+        <field name="type">product</field>
+        <field name="categ_id" ref="categ_aifa_fg"/>
+        <field name="tracking">lot</field>
+        <field name="use_expiration_date" eval="True"/>
+        <field name="expiration_time">365</field>
+        <field name="alert_time">90</field>
+        <field name="weight">0.035</field>
+        <field name="list_price">120.0</field>
+        <field name="sale_ok" eval="True"/>
+    </record>
+    <record id="product_fg_pine_100" model="product.product">
+        <field name="name">Aifa Dried Pineapple Slices 100g</field>
+        <field name="default_code">AIFA-PINE-100</field>
+        <field name="barcode">6009880000020</field>
+        <field name="type">product</field>
+        <field name="categ_id" ref="categ_aifa_fg"/>
+        <field name="tracking">lot</field>
+        <field name="use_expiration_date" eval="True"/>
+        <field name="expiration_time">365</field>
+        <field name="alert_time">90</field>
+        <field name="weight">0.100</field>
+        <field name="list_price">310.0</field>
+        <field name="sale_ok" eval="True"/>
+    </record>
+    <record id="product_fg_mango_35" model="product.product">
+        <field name="name">Aifa Dried Mango Strips 35g</field>
+        <field name="default_code">AIFA-MANG-35</field>
+        <field name="barcode">6009880000037</field>
+        <field name="type">product</field>
+        <field name="categ_id" ref="categ_aifa_fg"/>
+        <field name="tracking">lot</field>
+        <field name="use_expiration_date" eval="True"/>
+        <field name="expiration_time">365</field>
+        <field name="alert_time">90</field>
+        <field name="weight">0.035</field>
+        <field name="list_price">130.0</field>
+        <field name="sale_ok" eval="True"/>
+    </record>
+    <record id="product_fg_mango_100" model="product.product">
+        <field name="name">Aifa Dried Mango Strips 100g</field>
+        <field name="default_code">AIFA-MANG-100</field>
+        <field name="barcode">6009880000044</field>
+        <field name="type">product</field>
+        <field name="categ_id" ref="categ_aifa_fg"/>
+        <field name="tracking">lot</field>
+        <field name="use_expiration_date" eval="True"/>
+        <field name="expiration_time">365</field>
+        <field name="alert_time">90</field>
+        <field name="weight">0.100</field>
+        <field name="list_price">340.0</field>
+        <field name="sale_ok" eval="True"/>
+    </record>
+    <record id="product_fg_tomato_100" model="product.product">
+        <field name="name">Aifa Dried Tomato Slices 100g</field>
+        <field name="default_code">AIFA-TOMA-100</field>
+        <field name="barcode">6009880000051</field>
+        <field name="type">product</field>
+        <field name="categ_id" ref="categ_aifa_fg"/>
+        <field name="tracking">lot</field>
+        <field name="use_expiration_date" eval="True"/>
+        <field name="expiration_time">365</field>
+        <field name="alert_time">90</field>
+        <field name="weight">0.100</field>
+        <field name="list_price">290.0</field>
+        <field name="sale_ok" eval="True"/>
+    </record>
+    <record id="product_fg_medley_100" model="product.product">
+        <field name="name">Aifa Mixed Fruit Medley 100g</field>
+        <field name="default_code">AIFA-MEDL-100</field>
+        <field name="barcode">6009880000068</field>
+        <field name="type">product</field>
+        <field name="categ_id" ref="categ_aifa_fg"/>
+        <field name="tracking">lot</field>
+        <field name="use_expiration_date" eval="True"/>
+        <field name="expiration_time">365</field>
+        <field name="alert_time">90</field>
+        <field name="weight">0.100</field>
+        <field name="list_price">360.0</field>
+        <field name="sale_ok" eval="True"/>
+    </record>
+    <record id="product_fg_bulk_1kg" model="product.product">
+        <field name="name">Aifa Foodservice Dried Mango 1kg (N2 flushed)</field>
+        <field name="default_code">AIFA-FS-MANG-1K</field>
+        <field name="type">product</field>
+        <field name="categ_id" ref="categ_aifa_fg"/>
+        <field name="tracking">lot</field>
+        <field name="use_expiration_date" eval="True"/>
+        <field name="expiration_time">365</field>
+        <field name="alert_time">90</field>
+        <field name="weight">1.0</field>
+        <field name="list_price">2600.0</field>
+        <field name="sale_ok" eval="True"/>
+    </record>
+
+    <!-- ================= Regions ================= -->
+    <record id="region_gamo" model="aifa.region">
+        <field name="name">Gamo / Arba Minch</field>
+        <field name="code">GMA</field>
+        <field name="sequence">10</field>
+        <field name="gps_lat">6.033500</field>
+        <field name="gps_lng">37.550000</field>
+        <field name="notes">Primary pineapple belt. Smooth Cayenne and Queen Victoria. Road transfer to Addis approx. 8h - cold-chain critical in the dry season.</field>
+    </record>
+    <record id="region_sidama" model="aifa.region">
+        <field name="name">Sidama</field>
+        <field name="code">SID</field>
+        <field name="sequence">20</field>
+        <field name="gps_lat">6.771000</field>
+        <field name="gps_lng">38.485000</field>
+        <field name="notes">Mango (Apple Mango, Tommy Atkins) and avocado belt.</field>
+    </record>
+    <record id="region_afar" model="aifa.region">
+        <field name="name">Afar</field>
+        <field name="code">AFR</field>
+        <field name="sequence">30</field>
+        <field name="gps_lat">11.755000</field>
+        <field name="gps_lng">40.958000</field>
+        <field name="notes">Irrigated lowland mango and tomato; counter-seasonal supply that smooths factory loading.</field>
+    </record>
+    <record id="region_rift" model="aifa.region">
+        <field name="name">Rift Valley (Ziway / Meki)</field>
+        <field name="code">RVL</field>
+        <field name="sequence">40</field>
+        <field name="gps_lat">7.933000</field>
+        <field name="gps_lng">38.716000</field>
+        <field name="notes">Plum tomato surplus catchment. Shortest haul to the Addis plant.</field>
+    </record>
+
+    <record id="centre_arbaminch" model="aifa.collection.centre">
+        <field name="name">Arba Minch Depot</field>
+        <field name="code">AMC01</field>
+        <field name="region_id" ref="region_gamo"/>
+        <field name="has_cold_room" eval="True"/>
+        <field name="gps_lat">6.037000</field>
+        <field name="gps_lng">37.551000</field>
+    </record>
+    <record id="centre_chencha" model="aifa.collection.centre">
+        <field name="name">Chencha Buying Point</field>
+        <field name="code">CHE01</field>
+        <field name="region_id" ref="region_gamo"/>
+    </record>
+    <record id="centre_yirgalem" model="aifa.collection.centre">
+        <field name="name">Yirgalem Depot</field>
+        <field name="code">YIR01</field>
+        <field name="region_id" ref="region_sidama"/>
+        <field name="has_cold_room" eval="True"/>
+    </record>
+    <record id="centre_awash" model="aifa.collection.centre">
+        <field name="name">Awash Buying Point</field>
+        <field name="code">AWA01</field>
+        <field name="region_id" ref="region_afar"/>
+    </record>
+    <record id="centre_ziway" model="aifa.collection.centre">
+        <field name="name">Ziway Buying Point</field>
+        <field name="code">ZWY01</field>
+        <field name="region_id" ref="region_rift"/>
+    </record>
+
+    <!-- ================= Crops with calibrated standards ================= -->
+    <record id="crop_pineapple" model="aifa.crop">
+        <field name="name">Pineapple</field>
+        <field name="code">PINE</field>
+        <field name="sequence">10</field>
+        <field name="color">3</field>
+        <field name="raw_product_id" ref="product_raw_pineapple"/>
+        <field name="prepped_product_id" ref="product_prep_pineapple"/>
+        <field name="dried_product_id" ref="product_dry_pineapple"/>
+        <field name="prep_yield_pct">55.0</field>
+        <field name="dry_yield_pct">17.0</field>
+        <field name="yield_tolerance_pct">3.0</field>
+        <field name="target_moisture_pct">14.0</field>
+        <field name="target_water_activity">0.60</field>
+        <field name="min_brix">13.0</field>
+        <field name="drying_temp_min">57.0</field>
+        <field name="drying_temp_max">65.0</field>
+        <field name="drying_hours_min">14.0</field>
+        <field name="drying_hours_max">18.0</field>
+        <field name="slice_thickness_mm">8.0</field>
+        <field name="notes">Crown, shell and core removal is the dominant prep loss (~45%). Core can be diverted to a secondary juice/compost stream. Do not dry below aw 0.40 - the slices turn brittle and lose the pliable chew the brand is known for.</field>
+    </record>
+    <record id="crop_mango" model="aifa.crop">
+        <field name="name">Mango</field>
+        <field name="code">MANG</field>
+        <field name="sequence">20</field>
+        <field name="color">2</field>
+        <field name="raw_product_id" ref="product_raw_mango"/>
+        <field name="prepped_product_id" ref="product_prep_mango"/>
+        <field name="dried_product_id" ref="product_dry_mango"/>
+        <field name="prep_yield_pct">65.0</field>
+        <field name="dry_yield_pct">20.0</field>
+        <field name="yield_tolerance_pct">3.0</field>
+        <field name="target_moisture_pct">15.0</field>
+        <field name="target_water_activity">0.60</field>
+        <field name="min_brix">14.0</field>
+        <field name="drying_temp_min">55.0</field>
+        <field name="drying_temp_max">62.0</field>
+        <field name="drying_hours_min">12.0</field>
+        <field name="drying_hours_max">16.0</field>
+        <field name="slice_thickness_mm">7.0</field>
+        <field name="notes">Peel + stone account for ~35% prep loss; stone share varies strongly by cultivar (Keitt lower, Tommy Atkins higher). Fibrous cultivars show wide moisture/aw scatter - sample 3 points per tray trolley, not one.</field>
+    </record>
+    <record id="crop_tomato" model="aifa.crop">
+        <field name="name">Tomato</field>
+        <field name="code">TOMA</field>
+        <field name="sequence">30</field>
+        <field name="color">1</field>
+        <field name="raw_product_id" ref="product_raw_tomato"/>
+        <field name="prepped_product_id" ref="product_prep_tomato"/>
+        <field name="dried_product_id" ref="product_dry_tomato"/>
+        <field name="prep_yield_pct">95.0</field>
+        <field name="dry_yield_pct">7.2</field>
+        <field name="yield_tolerance_pct">1.5</field>
+        <field name="target_moisture_pct">12.0</field>
+        <field name="target_water_activity">0.55</field>
+        <field name="min_brix">4.5</field>
+        <field name="drying_temp_min">55.0</field>
+        <field name="drying_temp_max">60.0</field>
+        <field name="drying_hours_min">14.0</field>
+        <field name="drying_hours_max">20.0</field>
+        <field name="slice_thickness_mm">10.0</field>
+        <field name="notes">IMPORTANT: tomato is ~94% water, so its fresh-to-dried ratio is roughly 15:1, NOT the 8:1-10:1 used for pineapple and mango. Costing and capacity planning must use the per-crop factor. Halve rather than slice; dry cut-face up to limit juice loss to the tray.</field>
+    </record>
+
+    <record id="variety_pine_cayenne" model="aifa.crop.variety">
+        <field name="name">Smooth Cayenne</field>
+        <field name="crop_id" ref="crop_pineapple"/>
+        <field name="region_ids" eval="[(6, 0, [ref('region_gamo')])]"/>
+        <field name="harvest_month_start">3</field>
+        <field name="harvest_month_end">7</field>
+        <field name="prep_yield_pct">55.0</field>
+        <field name="dry_yield_pct">17.0</field>
+        <field name="typical_brix">14.0</field>
+    </record>
+    <record id="variety_pine_victoria" model="aifa.crop.variety">
+        <field name="name">Queen Victoria</field>
+        <field name="crop_id" ref="crop_pineapple"/>
+        <field name="region_ids" eval="[(6, 0, [ref('region_gamo')])]"/>
+        <field name="harvest_month_start">4</field>
+        <field name="harvest_month_end">8</field>
+        <field name="prep_yield_pct">52.0</field>
+        <field name="dry_yield_pct">18.5</field>
+        <field name="typical_brix">16.0</field>
+    </record>
+    <record id="variety_mango_apple" model="aifa.crop.variety">
+        <field name="name">Apple Mango</field>
+        <field name="crop_id" ref="crop_mango"/>
+        <field name="region_ids" eval="[(6, 0, [ref('region_sidama'), ref('region_afar')])]"/>
+        <field name="harvest_month_start">4</field>
+        <field name="harvest_month_end">6</field>
+        <field name="prep_yield_pct">67.0</field>
+        <field name="dry_yield_pct">20.5</field>
+        <field name="typical_brix">15.0</field>
+    </record>
+    <record id="variety_mango_tommy" model="aifa.crop.variety">
+        <field name="name">Tommy Atkins</field>
+        <field name="crop_id" ref="crop_mango"/>
+        <field name="region_ids" eval="[(6, 0, [ref('region_sidama')])]"/>
+        <field name="harvest_month_start">5</field>
+        <field name="harvest_month_end">7</field>
+        <field name="prep_yield_pct">62.0</field>
+        <field name="dry_yield_pct">19.0</field>
+        <field name="typical_brix">13.5</field>
+    </record>
+    <record id="variety_mango_keitt" model="aifa.crop.variety">
+        <field name="name">Keitt</field>
+        <field name="crop_id" ref="crop_mango"/>
+        <field name="region_ids" eval="[(6, 0, [ref('region_afar')])]"/>
+        <field name="harvest_month_start">7</field>
+        <field name="harvest_month_end">9</field>
+        <field name="prep_yield_pct">68.0</field>
+        <field name="dry_yield_pct">21.0</field>
+        <field name="typical_brix">14.5</field>
+    </record>
+    <record id="variety_tomato_plum" model="aifa.crop.variety">
+        <field name="name">Ethiopian Plum (Roma type)</field>
+        <field name="crop_id" ref="crop_tomato"/>
+        <field name="region_ids" eval="[(6, 0, [ref('region_rift'), ref('region_afar')])]"/>
+        <field name="harvest_month_start">1</field>
+        <field name="harvest_month_end">12</field>
+        <field name="prep_yield_pct">95.0</field>
+        <field name="dry_yield_pct">7.2</field>
+        <field name="typical_brix">4.8</field>
+    </record>
+
+</odoo>

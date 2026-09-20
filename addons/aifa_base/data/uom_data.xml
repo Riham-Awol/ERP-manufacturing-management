@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Aifa weighs finished pouches in grams; Odoo ships kg/g already but
+             the plant also counts trays and cartons. -->
+        <record id="uom_categ_tray" model="uom.category">
+            <field name="name">Dehydrator Tray</field>
+        </record>
+        <record id="uom_tray" model="uom.uom">
+            <field name="name">Tray</field>
+            <field name="category_id" ref="uom_categ_tray"/>
+            <field name="factor">1.0</field>
+            <field name="uom_type">reference</field>
+        </record>
+        <record id="uom_tray_stack" model="uom.uom">
+            <field name="name">Trolley (20 trays)</field>
+            <field name="category_id" ref="uom_categ_tray"/>
+            <field name="factor_inv">20.0</field>
+            <field name="uom_type">bigger</field>
+        </record>
+    </data>
+</odoo>

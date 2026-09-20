@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_aifa_crop_tree" model="ir.ui.view">
+        <field name="name">aifa.crop.tree</field>
+        <field name="model">aifa.crop</field>
+        <field name="arch" type="xml">
+            <tree string="Crops">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="prep_yield_pct" string="Prep %"/>
+                <field name="dry_yield_pct" string="Dry %"/>
+                <field name="overall_ratio" string="Fresh:Dried"/>
+                <field name="target_moisture_pct" string="Max Moisture %"/>
+                <field name="target_water_activity" string="Max aw"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_aifa_crop_form" model="ir.ui.view">
+        <field name="name">aifa.crop.form</field>
+        <field name="model">aifa.crop</field>
+        <field name="arch" type="xml">
+            <form string="Crop">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Pineapple"/></h1>
+                    </div>
+                    <group>
+                        <group string="Identification">
+                            <field name="code" placeholder="PINE"/>
+                            <field name="active" invisible="1"/>
+                            <field name="color" widget="color_picker"/>
+                        </group>
+                        <group string="Product Chain">
+                            <field name="raw_product_id"/>
+                            <field name="prepped_product_id"/>
+                            <field name="dried_product_id"/>
+                        </group>
+                    </group>
+                    <group string="Mass Balance Standards">
+                        <group>
+                            <label for="prep_yield_pct"/>
+                            <div class="o_row">
+                                <field name="prep_yield_pct" class="oe_inline"/>
+                                <span class="oe_inline"> % of accepted raw kg</span>
+                            </div>
+                            <label for="dry_yield_pct"/>
+                            <div class="o_row">
+                                <field name="dry_yield_pct" class="oe_inline"/>
+                                <span class="oe_inline"> % of prepped kg</span>
+                            </div>
+                            <field name="yield_tolerance_pct"/>
+                        </group>
+                        <group>
+                            <label for="overall_ratio"/>
+                            <div class="o_row">
+                                <field name="overall_ratio" class="oe_inline"/>
+                                <span class="oe_inline"> kg fresh per 1 kg dried</span>
+                            </div>
+                            <field name="shelf_life_days"/>
+                        </group>
+                    </group>
+                    <group string="Quality &amp; Process Standards">
+                        <group>
+                            <field name="target_moisture_pct"/>
+                            <field name="target_water_activity"/>
+                            <field name="min_brix"/>
+                            <field name="slice_thickness_mm"/>
+                        </group>
+                        <group>
+                            <field name="drying_temp_min"/>
+                            <field name="drying_temp_max"/>
+                            <field name="drying_hours_min"/>
+                            <field name="drying_hours_max"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Cultivars" name="varieties">
+                            <field name="variety_ids">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="region_ids" widget="many2many_tags"/>
+                                    <field name="harvest_month_start"/>
+                                    <field name="harvest_month_end"/>
+                                    <field name="typical_brix"/>
+                                    <field name="prep_yield_pct"/>
+                                    <field name="dry_yield_pct"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Processing Notes" name="notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_aifa_crop" model="ir.actions.act_window">
+        <field name="name">Crops</field>
+        <field name="res_model">aifa.crop</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Define a crop</p>
+            <p>A crop carries the standard prep and drying yields. Every production
+               run is measured against these, so calibrate them on real trial
+               batches during discovery before go-live.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_aifa_crop" name="Crops &amp; Cultivars"
+              parent="menu_aifa_config_master" action="action_aifa_crop" sequence="20"/>
+
+</odoo>

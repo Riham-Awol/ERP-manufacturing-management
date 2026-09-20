@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_aifa_dehydration_run_tree" model="ir.ui.view">
+        <field name="name">aifa.dehydration.run.tree</field>
+        <field name="model">aifa.dehydration.run</field>
+        <field name="arch" type="xml">
+            <tree string="Dehydration Runs"
+                  decoration-danger="variance_flag == 'low' or qa_blocked"
+                  decoration-warning="temp_excursion"
+                  decoration-success="state == 'released'"
+                  decoration-muted="state == 'cancel'">
+                <field name="load_datetime"/>
+                <field name="name"/>
+                <field name="wip_lot_code" optional="show"/>
+                <field name="dehydrator_id"/>
+                <field name="crop_id"/>
+                <field name="wet_weight_kg" sum="Wet kg"/>
+                <field name="dry_weight_kg" sum="Dry kg"/>
+                <field name="actual_yield_pct"/>
+                <field name="standard_yield_pct" optional="hide"/>
+                <field name="yield_variance_pct" optional="show"/>
+                <field name="moisture_out_pct"/>
+                <field name="water_activity"/>
+                <field name="duration_hours" optional="hide"/>
+                <field name="energy_kwh" sum="kWh" optional="hide"/>
+                <field name="energy_per_kg_dried" optional="hide"/>
+                <field name="temp_excursion" optional="hide" widget="boolean_toggle"/>
+                <field name="qa_blocked" optional="hide" widget="boolean_toggle"/>
+                <field name="variance_flag" widget="badge"
+                       decoration-danger="variance_flag == 'low'"
+                       decoration-warning="variance_flag == 'high'"
+                       decoration-success="variance_flag == 'ok'"/>
+                <field name="state" widget="badge" decoration-success="state == 'released'"
+                       decoration-danger="state == 'quarantine'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_aifa_dehydration_run_form" model="ir.ui.view">
+        <field name="name">aifa.dehydration.run.form</field>
+        <field name="model">aifa.dehydration.run</field>
+        <field name="arch" type="xml">
+            <form string="Dehydration Run">
+                <header>
+                    <button name="action_start" type="object" string="Start Drying"
+                            class="btn-primary" invisible="state not in ('draft','loading')"/>
+                    <button name="action_unload" type="object" string="Unload &amp; Weigh"
+                            class="btn-primary" invisible="state != 'running'"/>
+                    <button name="action_release" type="object" string="Release to Packing"
+                            class="btn-primary" invisible="state not in ('unloaded','quarantine')"
+                            groups="aifa_base.group_aifa_qa_manager"/>
+                    <button name="action_redry" type="object" string="Send for Re-drying"
+                            invisible="state not in ('unloaded','quarantine')"/>
+                    <button name="action_quarantine" type="object" string="Quarantine"
+                            class="btn-danger" invisible="state not in ('unloaded','running')"
+                            groups="aifa_base.group_aifa_qa_manager"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('released','cancel')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,running,unloaded,released"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="QA Blocked" bg_color="text-bg-danger"
+                            invisible="not qa_blocked"/>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                        <h2 class="text-muted"><field name="wip_lot_code" readonly="1"
+                                                      placeholder="Assigned on unload"/></h2>
+                    </div>
+                    <div class="alert alert-danger" role="alert" invisible="not qa_blocked">
+                        <field name="qa_note" readonly="1" nolabel="1"/>
+                    </div>
+                    <div class="alert alert-warning" role="alert" invisible="not temp_excursion">
+                        The achieved temperature / time profile fell outside the validated band
+                        for this crop. Attach the data-logger trace and record the deviation
+                        assessment before releasing the lot.
+                    </div>
+                    <group>
+                        <group string="Setup">
+                            <field name="dehydrator_id"/>
+                            <field name="crop_id"/>
+                            <field name="production_id"/>
+                            <field name="operator_id"/>
+                            <field name="shift"/>
+                        </group>
+                        <group string="Source Material">
+                            <field name="prep_log_ids" widget="many2many_tags"/>
+                            <field name="intake_batch_ids" widget="many2many_tags" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Load In">
+                            <field name="load_datetime"/>
+                            <field name="tray_count"/>
+                            <field name="wet_weight_kg"/>
+                            <field name="load_fill_pct" widget="percentage"/>
+                        </group>
+                        <group string="Unload">
+                            <field name="unload_datetime"/>
+                            <field name="duration_hours"/>
+                            <field name="dry_weight_kg"/>
+                            <field name="water_removed_kg"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Drying Profile">
+                            <field name="target_temp_c"/>
+                            <field name="avg_temp_c"/>
+                            <field name="max_temp_c"/>
+                            <field name="ambient_rh_pct"/>
+                            <field name="temp_excursion" readonly="1"/>
+                        </group>
+                        <group string="Release Criteria (CCP-2)">
+                            <field name="moisture_out_pct"/>
+                            <field name="water_activity"/>
+                            <field name="moisture_sample_count"/>
+                            <field name="qa_blocked" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Yield">
+                            <field name="actual_yield_pct"/>
+                            <field name="standard_yield_pct"/>
+                            <field name="yield_variance_pct"/>
+                            <field name="variance_flag"/>
+                        </group>
+                        <group string="Energy &amp; Labour">
+                            <field name="energy_kwh"/>
+                            <field name="energy_source"/>
+                            <field name="energy_cost"/>
+                            <field name="energy_per_kg_dried"/>
+                            <field name="labour_hours"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Profile Notes" name="profile">
+                            <field name="profile_note"
+                                   placeholder="Data logger file reference, observed cold spots, damper settings, power interruptions..."/>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="note"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_aifa_dehydration_run_search" model="ir.ui.view">
+        <field name="name">aifa.dehydration.run.search</field>
+        <field name="model">aifa.dehydration.run</field>
+        <field name="arch" type="xml">
+            <search string="Dehydration Runs">
+                <field name="name" filter_domain="['|',('name','ilike',self),('wip_lot_code','ilike',self)]"/>
+                <field name="dehydrator_id"/>
+                <field name="crop_id"/>
+                <field name="operator_id"/>
+                <filter name="running" string="Currently Drying" domain="[('state','=','running')]"/>
+                <filter name="blocked" string="QA Blocked" domain="[('qa_blocked','=',True)]"/>
+                <filter name="variance" string="Out of Tolerance" domain="[('variance_flag','!=','ok')]"/>
+                <filter name="excursion" string="Temperature Excursion" domain="[('temp_excursion','=',True)]"/>
+                <separator/>
+                <filter name="last30" string="Last 30 Days"
+                        domain="[('load_datetime','&gt;=',(context_today() - relativedelta(days=30)).strftime('%Y-%m-%d'))]"/>
+                <group expand="0" string="Group By">
+                    <filter name="g_dryer" string="Chamber" context="{'group_by':'dehydrator_id'}"/>
+                    <filter name="g_crop" string="Crop" context="{'group_by':'crop_id'}"/>
+                    <filter name="g_state" string="Status" context="{'group_by':'state'}"/>
+                    <filter name="g_flag" string="Variance" context="{'group_by':'variance_flag'}"/>
+                    <filter name="g_date" string="Load Week" context="{'group_by':'load_datetime:week'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_aifa_dehydration_run_pivot" model="ir.ui.view">
+        <field name="name">aifa.dehydration.run.pivot</field>
+        <field name="model">aifa.dehydration.run</field>
+        <field name="arch" type="xml">
+            <pivot string="Drying Yield Analysis" sample="1">
+                <field name="crop_id" type="row"/>
+                <field name="dehydrator_id" type="col"/>
+                <field name="wet_weight_kg" type="measure"/>
+                <field name="dry_weight_kg" type="measure"/>
+                <field name="actual_yield_pct" type="measure"/>
+                <field name="energy_kwh" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_aifa_dehydration_run_graph" model="ir.ui.view">
+        <field name="name">aifa.dehydration.run.graph</field>
+        <field name="model">aifa.dehydration.run</field>
+        <field name="arch" type="xml">
+            <graph string="Yield Trend" type="line" sample="1">
+                <field name="load_datetime" interval="day"/>
+                <field name="actual_yield_pct" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_aifa_dehydration_run" model="ir.actions.act_window">
+        <field name="name">Dehydration Runs</field>
+        <field name="res_model">aifa.dehydration.run</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
+        <field name="search_view_id" ref="view_aifa_dehydration_run_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Log a chamber load</p>
+            <p>Record the wet load in and the dry load out. The system computes the
+               yield, compares it with the crop standard and blocks the release to
+               packing if residual moisture or water activity is out of spec.</p>
+        </field>
+    </record>
+
+    <record id="action_aifa_run_blocked" model="ir.actions.act_window">
+        <field name="name">QA-Blocked Runs</field>
+        <field name="res_model">aifa.dehydration.run</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('qa_blocked','=',True)]</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_aifa_root"
+              name="Aifa Agro"
+              web_icon="aifa_base,static/description/icon.png"
+              sequence="15"
+              groups="aifa_base.group_aifa_field_agent,aifa_base.group_aifa_operator,aifa_base.group_aifa_qa_manager,aifa_base.group_aifa_warehouse,aifa_base.group_aifa_route_sales,aifa_base.group_aifa_manager"/>
+
+    <!-- Top-level operational sections; child items are contributed by the
+         functional modules of the suite. -->
+    <menuitem id="menu_aifa_sourcing" name="Sourcing" parent="menu_aifa_root" sequence="10"/>
+    <menuitem id="menu_aifa_processing" name="Processing" parent="menu_aifa_root" sequence="20"/>
+    <menuitem id="menu_aifa_quality" name="Quality" parent="menu_aifa_root" sequence="30"/>
+    <menuitem id="menu_aifa_traceability" name="Traceability" parent="menu_aifa_root" sequence="40"/>
+    <menuitem id="menu_aifa_distribution" name="Distribution" parent="menu_aifa_root" sequence="50"/>
+    <menuitem id="menu_aifa_reporting" name="Reporting" parent="menu_aifa_root" sequence="80"/>
+    <menuitem id="menu_aifa_config" name="Configuration" parent="menu_aifa_root" sequence="90"
+              groups="aifa_base.group_aifa_manager"/>
+
+    <menuitem id="menu_aifa_config_master" name="Master Data" parent="menu_aifa_config" sequence="10"/>
+
+</odoo>

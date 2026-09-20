@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_aifa_prod_prep" name="1. Preparation Orders"
+              parent="aifa_base.menu_aifa_processing"
+              action="action_aifa_production_prep" sequence="10"/>
+    <menuitem id="menu_aifa_prep_log" name="Prep Logs"
+              parent="aifa_base.menu_aifa_processing"
+              action="action_aifa_prep_log" sequence="15"/>
+    <menuitem id="menu_aifa_prod_dry" name="2. Dehydration Orders"
+              parent="aifa_base.menu_aifa_processing"
+              action="action_aifa_production_dry" sequence="20"/>
+    <menuitem id="menu_aifa_dehydration_run" name="Dehydration Runs"
+              parent="aifa_base.menu_aifa_processing"
+              action="action_aifa_dehydration_run" sequence="25"/>
+    <menuitem id="menu_aifa_run_blocked" name="QA-Blocked Runs"
+              parent="aifa_base.menu_aifa_processing"
+              action="action_aifa_run_blocked" sequence="27"
+              groups="aifa_base.group_aifa_qa_manager"/>
+    <menuitem id="menu_aifa_prod_pack" name="3. Packing Orders"
+              parent="aifa_base.menu_aifa_processing"
+              action="action_aifa_production_pack" sequence="30"/>
+
+    <menuitem id="menu_aifa_scrap_analysis" name="Scrap Analysis"
+              parent="aifa_base.menu_aifa_reporting"
+              action="action_aifa_prep_scrap" sequence="20"/>
+
+    <menuitem id="menu_aifa_dehydrator" name="Dehydration Chambers"
+              parent="aifa_base.menu_aifa_config_master"
+              action="action_aifa_dehydrator" sequence="50"/>
+
+</odoo>

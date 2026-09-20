@@ -1,0 +1,17 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_dehydrator_operator,aifa.dehydrator operator,model_aifa_dehydrator,aifa_base.group_aifa_operator,1,1,0,0
+access_dehydrator_qa,aifa.dehydrator qa,model_aifa_dehydrator,aifa_base.group_aifa_qa_manager,1,1,0,0
+access_dehydrator_user,aifa.dehydrator user,model_aifa_dehydrator,base.group_user,1,0,0,0
+access_dehydrator_manager,aifa.dehydrator manager,model_aifa_dehydrator,aifa_base.group_aifa_manager,1,1,1,1
+access_prep_log_operator,aifa.prep.log operator,model_aifa_prep_log,aifa_base.group_aifa_operator,1,1,1,0
+access_prep_log_qa,aifa.prep.log qa,model_aifa_prep_log,aifa_base.group_aifa_qa_manager,1,1,1,0
+access_prep_log_user,aifa.prep.log user,model_aifa_prep_log,base.group_user,1,0,0,0
+access_prep_log_manager,aifa.prep.log manager,model_aifa_prep_log,aifa_base.group_aifa_manager,1,1,1,1
+access_prep_scrap_operator,aifa.prep.scrap operator,model_aifa_prep_scrap,aifa_base.group_aifa_operator,1,1,1,1
+access_prep_scrap_user,aifa.prep.scrap user,model_aifa_prep_scrap,base.group_user,1,0,0,0
+access_prep_scrap_manager,aifa.prep.scrap manager,model_aifa_prep_scrap,aifa_base.group_aifa_manager,1,1,1,1
+access_run_operator,aifa.dehydration.run operator,model_aifa_dehydration_run,aifa_base.group_aifa_operator,1,1,1,0
+access_run_qa,aifa.dehydration.run qa,model_aifa_dehydration_run,aifa_base.group_aifa_qa_manager,1,1,1,0
+access_run_warehouse,aifa.dehydration.run warehouse,model_aifa_dehydration_run,aifa_base.group_aifa_warehouse,1,0,0,0
+access_run_user,aifa.dehydration.run user,model_aifa_dehydration_run,base.group_user,1,0,0,0
+access_run_manager,aifa.dehydration.run manager,model_aifa_dehydration_run,aifa_base.group_aifa_manager,1,1,1,1

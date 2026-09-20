@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================== Farmer ===================== -->
+    <record id="view_aifa_farmer_tree" model="ir.ui.view">
+        <field name="name">aifa.farmer.tree</field>
+        <field name="model">aifa.farmer</field>
+        <field name="arch" type="xml">
+            <tree string="Outgrowers">
+                <field name="ref"/>
+                <field name="name"/>
+                <field name="cooperative_id"/>
+                <field name="region_id"/>
+                <field name="centre_id"/>
+                <field name="crop_ids" widget="many2many_tags" optional="show"/>
+                <field name="total_hectares" sum="Hectares"/>
+                <field name="supplied_kg_ytd" sum="kg YTD"/>
+                <field name="paid_ytd" sum="Paid YTD" widget="monetary"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="payout_method" optional="hide"/>
+                <field name="gender" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_aifa_farmer_form" model="ir.ui.view">
+        <field name="name">aifa.farmer.form</field>
+        <field name="model">aifa.farmer</field>
+        <field name="arch" type="xml">
+            <form string="Outgrower">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_intakes" type="object"
+                                class="oe_stat_button" icon="fa-truck">
+                            <field name="intake_count" widget="statinfo" string="Intakes"/>
+                        </button>
+                        <button name="action_view_intakes" type="object"
+                                class="oe_stat_button" icon="fa-balance-scale">
+                            <field name="supplied_kg_ytd" widget="statinfo" string="kg YTD"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Outgrower full name"/></h1>
+                        <h3><field name="ref" readonly="1"/></h3>
+                    </div>
+                    <group>
+                        <group string="Identity">
+                            <field name="partner_id" readonly="1"/>
+                            <field name="national_id"/>
+                            <field name="phone"/>
+                            <field name="gender"/>
+                            <field name="household_size"/>
+                            <field name="date_registered"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group string="Location &amp; Supply">
+                            <field name="region_id"/>
+                            <field name="centre_id"/>
+                            <field name="kebele"/>
+                            <field name="cooperative_id"/>
+                            <field name="crop_ids" widget="many2many_tags"/>
+                            <field name="certification"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Payout">
+                            <field name="payout_method"/>
+                            <field name="wallet_number"
+                                   required="payout_method in ('telebirr','cbebirr','bank')"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Balances">
+                            <field name="advance_balance"/>
+                            <field name="crate_balance"/>
+                            <field name="paid_ytd"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Plots" name="plots">
+                            <field name="plot_ids">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="crop_id"/>
+                                    <field name="variety_id"/>
+                                    <field name="hectares" sum="Total ha"/>
+                                    <field name="tree_count"/>
+                                    <field name="soil_type"/>
+                                    <field name="irrigated"/>
+                                    <field name="gps_lat"/>
+                                    <field name="gps_lng"/>
+                                    <field name="expected_yield_kg" sum="Expected kg"/>
+                                </tree>
+                            </field>
+                            <group class="oe_subtotal_footer">
+                                <field name="total_hectares"/>
+                            </group>
+                        </page>
+                        <page string="Intake History" name="intakes">
+                            <field name="intake_ids" readonly="1">
+                                <tree>
+                                    <field name="intake_date"/>
+                                    <field name="lot_number"/>
+                                    <field name="crop_id"/>
+                                    <field name="accepted_weight_kg" sum="kg"/>
+                                    <field name="field_grade"/>
+                                    <field name="gate_grade"/>
+                                    <field name="amount_total" sum="Value"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="state" widget="badge"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_aifa_farmer_search" model="ir.ui.view">
+        <field name="name">aifa.farmer.search</field>
+        <field name="model">aifa.farmer</field>
+        <field name="arch" type="xml">
+            <search string="Outgrowers">
+                <field name="name" filter_domain="['|','|',('name','ilike',self),('ref','ilike',self),('phone','ilike',self)]"/>
+                <field name="cooperative_id"/>
+                <field name="region_id"/>
+                <field name="crop_ids"/>
+                <filter name="female" string="Women Outgrowers" domain="[('gender','=','female')]"/>
+                <filter name="certified" string="Certified Organic" domain="[('certification','in',('organic','organic_conv'))]"/>
+                <filter name="with_advance" string="Has Outstanding Advance" domain="[('advance_balance','&gt;',0)]"/>
+                <separator/>
+                <filter name="inactive" string="Archived" domain="[('active','=',False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="g_region" string="Region" context="{'group_by':'region_id'}"/>
+                    <filter name="g_centre" string="Collection Centre" context="{'group_by':'centre_id'}"/>
+                    <filter name="g_coop" string="Cooperative" context="{'group_by':'cooperative_id'}"/>
+                    <filter name="g_gender" string="Gender" context="{'group_by':'gender'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_aifa_farmer" model="ir.actions.act_window">
+        <field name="name">Outgrowers</field>
+        <field name="res_model">aifa.farmer</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_aifa_farmer_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Register an outgrower</p>
+            <p>Each outgrower is the root of the traceability tree. Registering the
+               plot GPS here is what lets a finished pouch be traced back to a
+               specific field during an EFDA or export audit.</p>
+        </field>
+    </record>
+
+    <!-- ===================== Cooperative ===================== -->
+    <record id="view_aifa_cooperative_tree" model="ir.ui.view">
+        <field name="name">aifa.cooperative.tree</field>
+        <field name="model">aifa.cooperative</field>
+        <field name="arch" type="xml">
+            <tree string="Cooperatives">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="region_id"/>
+                <field name="centre_id"/>
+                <field name="chairperson"/>
+                <field name="farmer_count" sum="Members"/>
+                <field name="female_member_ratio" widget="percentage" optional="show"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_aifa_cooperative_form" model="ir.ui.view">
+        <field name="name">aifa.cooperative.form</field>
+        <field name="model">aifa.cooperative</field>
+        <field name="arch" type="xml">
+            <form string="Cooperative">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="region_id"/>
+                            <field name="centre_id"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="chairperson"/>
+                            <field name="phone"/>
+                            <field name="partner_id"/>
+                            <field name="female_member_ratio" widget="percentage"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Members" name="members">
+                            <field name="farmer_ids" readonly="1">
+                                <tree>
+                                    <field name="ref"/>
+                                    <field name="name"/>
+                                    <field name="gender"/>
+                                    <field name="total_hectares"/>
+                                    <field name="supplied_kg_ytd"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_aifa_cooperative" model="ir.actions.act_window">
+        <field name="name">Cooperatives</field>
+        <field name="res_model">aifa.cooperative</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- ===================== Grade prices ===================== -->
+    <record id="view_aifa_grade_price_tree" model="ir.ui.view">
+        <field name="name">aifa.grade.price.tree</field>
+        <field name="model">aifa.grade.price</field>
+        <field name="arch" type="xml">
+            <tree string="Farm Gate Prices" editable="bottom">
+                <field name="crop_id"/>
+                <field name="region_id"/>
+                <field name="grade"/>
+                <field name="price_per_kg"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="crate_deposit"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="note"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_aifa_grade_price" model="ir.actions.act_window">
+        <field name="name">Farm Gate Grade Prices</field>
+        <field name="res_model">aifa.grade.price</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Set a farm gate price</p>
+            <p>Field agents never type a price at the depot. The mobile app sends
+               the crop and grade, and the server resolves the price from this
+               matrix, so the purchase cost that flows into product costing is
+               auditable.</p>
+        </field>
+    </record>
+
+</odoo>

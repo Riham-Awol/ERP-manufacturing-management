@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_aifa_intake_batch_tree" model="ir.ui.view">
+        <field name="name">aifa.intake.batch.tree</field>
+        <field name="model">aifa.intake.batch</field>
+        <field name="arch" type="xml">
+            <tree string="Raw Intake Batches"
+                  decoration-danger="state == 'rejected'"
+                  decoration-muted="state == 'cancel'"
+                  decoration-success="state == 'done'">
+                <field name="intake_date"/>
+                <field name="name"/>
+                <field name="lot_number"/>
+                <field name="farmer_id"/>
+                <field name="crop_id"/>
+                <field name="region_id" optional="show"/>
+                <field name="centre_id" optional="hide"/>
+                <field name="net_weight_kg" sum="Net kg"/>
+                <field name="rejected_weight_kg" sum="Rejected kg" optional="hide"/>
+                <field name="accepted_weight_kg" sum="Accepted kg"/>
+                <field name="field_grade" optional="hide"/>
+                <field name="gate_grade"/>
+                <field name="brix" optional="hide"/>
+                <field name="amount_total" sum="Value"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'done'"
+                       decoration-danger="state == 'rejected'"
+                       decoration-warning="state == 'received'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_aifa_intake_batch_form" model="ir.ui.view">
+        <field name="name">aifa.intake.batch.form</field>
+        <field name="model">aifa.intake.batch</field>
+        <field name="arch" type="xml">
+            <form string="Raw Intake Batch">
+                <header>
+                    <button name="action_weigh" type="object" string="Confirm Weighing"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_receive" type="object" string="Receive at Plant"
+                            class="btn-primary" invisible="state not in ('weighed','in_transit')"
+                            groups="aifa_base.group_aifa_receiving"/>
+                    <button name="action_qa_accept" type="object" string="QA Accept"
+                            class="btn-primary" invisible="state != 'received'"
+                            groups="aifa_base.group_aifa_receiving"/>
+                    <button name="action_qa_reject" type="object" string="QA Reject"
+                            class="btn-danger" invisible="state != 'received'"
+                            groups="aifa_base.group_aifa_receiving"/>
+                    <button name="action_print_crate_label" type="object" string="Print Crate Label"
+                            invisible="not lot_number"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('done','cancel')"/>
+                    <button name="action_draft" type="object" string="Reset to Draft"
+                            invisible="state not in ('cancel','rejected')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,weighed,received,accepted,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_lot" type="object" class="oe_stat_button"
+                                icon="fa-barcode" invisible="not lot_id" string="Stock Lot"/>
+                    </div>
+                    <widget name="web_ribbon" title="Rejected" bg_color="text-bg-danger"
+                            invisible="state != 'rejected'"/>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                        <h2 class="text-muted"><field name="lot_number" readonly="1"
+                                                      placeholder="Assigned on reception"/></h2>
+                    </div>
+                    <group>
+                        <group string="Source">
+                            <field name="farmer_id"/>
+                            <field name="plot_id"/>
+                            <field name="cooperative_id"/>
+                            <field name="centre_id"/>
+                            <field name="region_id"/>
+                            <field name="field_purchase_id"/>
+                        </group>
+                        <group string="Commodity">
+                            <field name="crop_id"/>
+                            <field name="variety_id"/>
+                            <field name="product_id"/>
+                            <field name="harvest_date"/>
+                            <field name="intake_date"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Weighing">
+                            <field name="gross_weight_kg"/>
+                            <field name="crate_count"/>
+                            <field name="crate_tare_kg"/>
+                            <field name="net_weight_kg"/>
+                            <field name="rejected_weight_kg"
+                                   readonly="state not in ('received','weighed','in_transit')"/>
+                            <field name="accepted_weight_kg" class="fw-bold"/>
+                            <field name="rejection_rate" widget="percentage"/>
+                            <field name="scale_serial"/>
+                        </group>
+                        <group string="Commercials">
+                            <field name="field_grade"/>
+                            <field name="gate_grade"/>
+                            <field name="price_per_kg"/>
+                            <field name="amount_total"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="payout_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Gate Inspection" name="qa">
+                            <group>
+                                <group>
+                                    <field name="brix"/>
+                                    <field name="decay_index"/>
+                                    <field name="pulp_temp_c"/>
+                                    <field name="foreign_matter"/>
+                                </group>
+                                <group>
+                                    <field name="qa_user_id"/>
+                                    <field name="qa_datetime"/>
+                                    <field name="location_dest_id"/>
+                                </group>
+                            </group>
+                            <field name="qa_note" placeholder="Inspection observations, corrective action, photos attached..."/>
+                        </page>
+                        <page string="Stock" name="stock">
+                            <group>
+                                <group>
+                                    <field name="lot_id"/>
+                                    <field name="picking_id"/>
+                                </group>
+                                <group>
+                                    <field name="client_ref"/>
+                                    <field name="gps_lat"/>
+                                    <field name="gps_lng"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_aifa_intake_batch_search" model="ir.ui.view">
+        <field name="name">aifa.intake.batch.search</field>
+        <field name="model">aifa.intake.batch</field>
+        <field name="arch" type="xml">
+            <search string="Intake Batches">
+                <field name="lot_number" filter_domain="['|',('lot_number','ilike',self),('name','ilike',self)]"/>
+                <field name="farmer_id"/>
+                <field name="crop_id"/>
+                <field name="region_id"/>
+                <filter name="to_receive" string="Awaiting Reception"
+                        domain="[('state','in',('weighed','in_transit'))]"/>
+                <filter name="to_inspect" string="Awaiting QA"
+                        domain="[('state','=','received')]"/>
+                <filter name="unpaid" string="Unpaid"
+                        domain="[('payout_id','=',False),('state','in',('accepted','done'))]"/>
+                <separator/>
+                <filter name="this_month" string="This Month"
+                        domain="[('intake_date','&gt;=',(context_today() + relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                <group expand="0" string="Group By">
+                    <filter name="g_crop" string="Crop" context="{'group_by':'crop_id'}"/>
+                    <filter name="g_region" string="Region" context="{'group_by':'region_id'}"/>
+                    <filter name="g_farmer" string="Outgrower" context="{'group_by':'farmer_id'}"/>
+                    <filter name="g_state" string="Status" context="{'group_by':'state'}"/>
+                    <filter name="g_date" string="Intake Month" context="{'group_by':'intake_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_aifa_intake_batch_pivot" model="ir.ui.view">
+        <field name="name">aifa.intake.batch.pivot</field>
+        <field name="model">aifa.intake.batch</field>
+        <field name="arch" type="xml">
+            <pivot string="Intake Analysis" sample="1">
+                <field name="crop_id" type="row"/>
+                <field name="intake_date" interval="month" type="col"/>
+                <field name="accepted_weight_kg" type="measure"/>
+                <field name="amount_total" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_aifa_intake_batch_graph" model="ir.ui.view">
+        <field name="name">aifa.intake.batch.graph</field>
+        <field name="model">aifa.intake.batch</field>
+        <field name="arch" type="xml">
+            <graph string="Intake Volume" type="bar" sample="1">
+                <field name="intake_date" interval="week"/>
+                <field name="accepted_weight_kg" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_aifa_intake_batch" model="ir.actions.act_window">
+        <field name="name">Raw Intake Batches</field>
+        <field name="res_model">aifa.intake.batch</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
+        <field name="search_view_id" ref="view_aifa_intake_batch_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No intake batch yet</p>
+            <p>An intake batch is one farmer's consignment of one crop, weighed once.
+               It receives the lot number that every downstream WIP and finished lot
+               inherits &#8212; this is the root of the traceability tree.</p>
+        </field>
+    </record>
+
+    <record id="action_aifa_intake_to_inspect" model="ir.actions.act_window">
+        <field name="name">Awaiting Gate Inspection</field>
+        <field name="res_model">aifa.intake.batch</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('state','=','received')]</field>
+        <field name="context">{'search_default_to_inspect': 1}</field>
+    </record>
+
+</odoo>
