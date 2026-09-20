@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_aifa_kpi_tree" model="ir.ui.view">
+        <field name="name">aifa.daily.kpi.tree</field>
+        <field name="model">aifa.daily.kpi</field>
+        <field name="arch" type="xml">
+            <tree string="Daily Plant KPIs" create="0">
+                <field name="date"/>
+                <field name="crop_id"/>
+                <field name="intake_kg" sum="Intake kg"/>
+                <field name="prepped_kg" sum="Prepped kg"/>
+                <field name="dried_kg" sum="Dried kg"/>
+                <field name="prep_yield_pct"/>
+                <field name="prep_yield_std_pct" optional="hide"/>
+                <field name="dry_yield_pct"/>
+                <field name="dry_yield_std_pct" optional="hide"/>
+                <field name="yield_gap_value" sum="Yield gap"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="energy_per_kg" optional="show"/>
+                <field name="chamber_utilisation_pct" optional="show"/>
+                <field name="first_pass_rate" optional="show"/>
+                <field name="cost_per_kg_dried" optional="show"/>
+                <field name="runs_quarantined" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_aifa_kpi_form" model="ir.ui.view">
+        <field name="name">aifa.daily.kpi.form</field>
+        <field name="model">aifa.daily.kpi</field>
+        <field name="arch" type="xml">
+            <form string="Daily KPI" create="0">
+                <header>
+                    <button name="action_recompute" type="object" string="Recompute"
+                            class="btn-primary"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="display_label" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Volumes">
+                            <field name="date"/>
+                            <field name="crop_id"/>
+                            <field name="intake_kg"/>
+                            <field name="intake_rejected_kg"/>
+                            <field name="prepped_kg"/>
+                            <field name="prep_scrap_kg"/>
+                            <field name="dried_kg"/>
+                        </group>
+                        <group string="Yield">
+                            <field name="prep_yield_pct"/>
+                            <field name="prep_yield_std_pct"/>
+                            <field name="dry_yield_pct"/>
+                            <field name="dry_yield_std_pct"/>
+                            <field name="yield_gap_value"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Operations">
+                            <field name="runs_completed"/>
+                            <field name="runs_quarantined"/>
+                            <field name="energy_kwh"/>
+                            <field name="energy_per_kg"/>
+                            <field name="chamber_utilisation_pct" widget="percentage"/>
+                        </group>
+                        <group string="Quality &amp; Cost">
+                            <field name="checks_total"/>
+                            <field name="checks_failed"/>
+                            <field name="first_pass_rate" widget="percentage"/>
+                            <field name="intake_cost"/>
+                            <field name="cost_per_kg_dried"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_aifa_kpi_graph" model="ir.ui.view">
+        <field name="name">aifa.daily.kpi.graph</field>
+        <field name="model">aifa.daily.kpi</field>
+        <field name="arch" type="xml">
+            <graph string="Plant Output" type="line" sample="1">
+                <field name="date" interval="day"/>
+                <field name="dried_kg" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_aifa_kpi_pivot" model="ir.ui.view">
+        <field name="name">aifa.daily.kpi.pivot</field>
+        <field name="model">aifa.daily.kpi</field>
+        <field name="arch" type="xml">
+            <pivot string="Plant KPI Analysis" sample="1">
+                <field name="crop_id" type="row"/>
+                <field name="date" interval="week" type="col"/>
+                <field name="intake_kg" type="measure"/>
+                <field name="dried_kg" type="measure"/>
+                <field name="yield_gap_value" type="measure"/>
+                <field name="energy_kwh" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_aifa_kpi_search" model="ir.ui.view">
+        <field name="name">aifa.daily.kpi.search</field>
+        <field name="model">aifa.daily.kpi</field>
+        <field name="arch" type="xml">
+            <search string="Daily KPIs">
+                <field name="crop_id"/>
+                <filter name="last30" string="Last 30 Days"
+                        domain="[('date','&gt;=',(context_today() - relativedelta(days=30)).strftime('%Y-%m-%d'))]"/>
+                <filter name="with_output" string="Production Days" domain="[('dried_kg','&gt;',0)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="g_crop" string="Crop" context="{'group_by':'crop_id'}"/>
+                    <filter name="g_month" string="Month" context="{'group_by':'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_aifa_kpi" model="ir.actions.act_window">
+        <field name="name">Daily Plant KPIs</field>
+        <field name="res_model">aifa.daily.kpi</field>
+        <field name="view_mode">graph,pivot,tree,form</field>
+        <field name="search_view_id" ref="view_aifa_kpi_search"/>
+        <field name="context">{'search_default_last30': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No KPI snapshot yet</p>
+            <p>Snapshots are built nightly. To backfill them now, run
+               <em>Aifa: build daily plant KPI snapshots</em> from Settings &#8594;
+               Technical &#8594; Scheduled Actions, or press Recompute on a row.</p>
+        </field>
+    </record>
+</odoo>

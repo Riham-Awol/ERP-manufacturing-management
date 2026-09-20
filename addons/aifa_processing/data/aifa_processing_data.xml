@@ -6,7 +6,7 @@
             <field name="name">Preparation Line (wash / peel / slice)</field>
             <field name="code">PREP</field>
             <field name="time_efficiency">100</field>
-            <field name="capacity">1</field>
+            <field name="default_capacity">1</field>
             <field name="costs_hour">180.0</field>
         </record>
 
@@ -14,14 +14,14 @@
             <field name="name">Dehydration Hall</field>
             <field name="code">DRY</field>
             <field name="time_efficiency">100</field>
-            <field name="capacity">4</field>
+            <field name="default_capacity">4</field>
             <field name="costs_hour">95.0</field>
         </record>
 
         <record id="workcenter_condition" model="mrp.workcenter">
             <field name="name">Conditioning / Equilibration Room</field>
             <field name="code">COND</field>
-            <field name="capacity">2</field>
+            <field name="default_capacity">2</field>
             <field name="costs_hour">40.0</field>
         </record>
 
@@ -29,7 +29,7 @@
             <field name="name">Packing &amp; Check-Weigh Line</field>
             <field name="code">PACK</field>
             <field name="time_efficiency">100</field>
-            <field name="capacity">1</field>
+            <field name="default_capacity">1</field>
             <field name="costs_hour">210.0</field>
         </record>
 

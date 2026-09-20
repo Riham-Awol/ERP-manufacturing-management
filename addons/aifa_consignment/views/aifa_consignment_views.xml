@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_aifa_consignment_tree" model="ir.ui.view">
+        <field name="name">aifa.consignment.tree</field>
+        <field name="model">aifa.consignment</field>
+        <field name="arch" type="xml">
+            <tree string="Consignment Placements" decoration-success="state == 'closed'"
+                  decoration-warning="next_count_due and next_count_due &lt; current_date">
+                <field name="date"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="channel" optional="show"/>
+                <field name="product_id"/>
+                <field name="lot_id" optional="show"/>
+                <field name="expiration_date" optional="show"/>
+                <field name="quantity_placed" sum="Placed"/>
+                <field name="quantity_sold" sum="Sold"/>
+                <field name="quantity_returned" sum="Returned" optional="hide"/>
+                <field name="balance_units" sum="On Shelf"/>
+                <field name="sell_through_pct" optional="show"/>
+                <field name="value_on_shelf" sum="Value on Shelf"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="next_count_due" optional="show"/>
+                <field name="state" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_aifa_consignment_form" model="ir.ui.view">
+        <field name="name">aifa.consignment.form</field>
+        <field name="model">aifa.consignment</field>
+        <field name="arch" type="xml">
+            <form string="Consignment Placement">
+                <header>
+                    <button name="action_place" type="object" string="Deliver to Shelf"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_close" type="object" string="Close Placement"
+                            invisible="state not in ('placed','counted')"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('closed','cancel')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,placed,counted,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_sale_orders" type="object"
+                                class="oe_stat_button" icon="fa-file-text-o"
+                                string="Sell-through Orders"/>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Placement">
+                            <field name="partner_id"/>
+                            <field name="channel"/>
+                            <field name="date"/>
+                            <field name="product_id"/>
+                            <field name="lot_id"/>
+                            <field name="expiration_date"/>
+                        </group>
+                        <group string="Quantities">
+                            <field name="quantity_placed"/>
+                            <field name="quantity_sold"/>
+                            <field name="quantity_returned"/>
+                            <field name="quantity_lost"/>
+                            <field name="balance_units" class="fw-bold"/>
+                            <field name="sell_through_pct" widget="percentage"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Value">
+                            <field name="unit_price"/>
+                            <field name="value_on_shelf"/>
+                            <field name="revenue_recognised"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Reconciliation">
+                            <field name="picking_id"/>
+                            <field name="last_count_date"/>
+                            <field name="next_count_due"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Count History" name="counts">
+                            <field name="count_ids" readonly="1">
+                                <tree>
+                                    <field name="count_id"/>
+                                    <field name="qty_expected"/>
+                                    <field name="qty_remaining"/>
+                                    <field name="qty_returned"/>
+                                    <field name="qty_sold" sum="Sold"/>
+                                    <field name="amount" sum="Billed"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes"><field name="note"/></page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_aifa_consignment_search" model="ir.ui.view">
+        <field name="name">aifa.consignment.search</field>
+        <field name="model">aifa.consignment</field>
+        <field name="arch" type="xml">
+            <search string="Consignment">
+                <field name="partner_id"/>
+                <field name="product_id"/>
+                <field name="lot_id"/>
+                <filter name="on_shelf" string="On Shelf"
+                        domain="[('state','in',('placed','counted'))]"/>
+                <filter name="due_count" string="Count Overdue"
+                        domain="[('next_count_due','&lt;',context_today().strftime('%Y-%m-%d')),('state','in',('placed','counted'))]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="g_partner" string="Retail Partner" context="{'group_by':'partner_id'}"/>
+                    <filter name="g_channel" string="Channel" context="{'group_by':'channel'}"/>
+                    <filter name="g_product" string="Product" context="{'group_by':'product_id'}"/>
+                    <filter name="g_state" string="Status" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_aifa_consignment_pivot" model="ir.ui.view">
+        <field name="name">aifa.consignment.pivot</field>
+        <field name="model">aifa.consignment</field>
+        <field name="arch" type="xml">
+            <pivot string="Sell-through Analysis" sample="1">
+                <field name="partner_id" type="row"/>
+                <field name="product_id" type="col"/>
+                <field name="quantity_placed" type="measure"/>
+                <field name="quantity_sold" type="measure"/>
+                <field name="balance_units" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_aifa_consignment" model="ir.actions.act_window">
+        <field name="name">Consignment Placements</field>
+        <field name="res_model">aifa.consignment</field>
+        <field name="view_mode">tree,form,pivot</field>
+        <field name="search_view_id" ref="view_aifa_consignment_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Place stock on a shelf</p>
+            <p>Consigned stock stays on Aifa's balance sheet until a shelf count
+               proves it sold. That is the honest accounting treatment, and it is
+               also what makes the receivable collectable.</p>
+        </field>
+    </record>
+
+    <!-- =============== Shelf counts =============== -->
+    <record id="view_aifa_shelf_count_tree" model="ir.ui.view">
+        <field name="name">aifa.shelf.count.tree</field>
+        <field name="model">aifa.shelf.count</field>
+        <field name="arch" type="xml">
+            <tree string="Shelf Counts" decoration-success="state == 'billed'">
+                <field name="date"/>
+                <field name="partner_id"/>
+                <field name="counted_by_id"/>
+                <field name="units_sold" sum="Sold"/>
+                <field name="units_returned" sum="Returned"/>
+                <field name="amount_billable" sum="Billable"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="sale_order_id"/>
+                <field name="state" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_aifa_shelf_count_form" model="ir.ui.view">
+        <field name="name">aifa.shelf.count.form</field>
+        <field name="model">aifa.shelf.count</field>
+        <field name="arch" type="xml">
+            <form string="Shelf Count">
+                <header>
+                    <button name="action_load_open_placements" type="object"
+                            string="Load Open Placements" invisible="state != 'draft'"/>
+                    <button name="action_confirm" type="object" string="Confirm Count"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_create_sale_order" type="object"
+                            string="Bill Sell-through" class="btn-primary"
+                            invisible="state != 'confirmed'"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('billed','cancel')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,confirmed,billed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="date"/>
+                            <field name="counted_by_id"/>
+                        </group>
+                        <group>
+                            <field name="units_sold"/>
+                            <field name="units_returned"/>
+                            <field name="amount_billable"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="sale_order_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <field name="line_ids">
+                        <tree editable="bottom">
+                            <field name="consignment_id" readonly="1"/>
+                            <field name="product_id" readonly="1"/>
+                            <field name="lot_id" readonly="1"/>
+                            <field name="qty_expected" sum="Expected"/>
+                            <field name="qty_remaining" sum="On Shelf"/>
+                            <field name="qty_returned" sum="Returned"/>
+                            <field name="return_reason"/>
+                            <field name="qty_sold" sum="Sold"/>
+                            <field name="unit_price"/>
+                            <field name="amount" sum="Billable"/>
+                            <field name="currency_id" column_invisible="1"/>
+                            <field name="note"/>
+                        </tree>
+                    </field>
+                    <field name="note" placeholder="Shelf position, competitor activity, promotion feedback..."/>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_aifa_shelf_count" model="ir.actions.act_window">
+        <field name="name">Shelf Counts</field>
+        <field name="res_model">aifa.shelf.count</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Record a shelf count</p>
+            <p>Load the open placements, count what is on the shelf, record returns,
+               and the system works out what sold and bills exactly that.</p>
+        </field>
+    </record>
+</odoo>

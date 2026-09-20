@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_aifa_impact_report_tree" model="ir.ui.view">
+        <field name="name">aifa.impact.report.tree</field>
+        <field name="model">aifa.impact.report</field>
+        <field name="arch" type="xml">
+            <tree string="Impact Reports">
+                <field name="name"/>
+                <field name="donor"/>
+                <field name="period_start"/>
+                <field name="period_end"/>
+                <field name="fruit_sourced_kg" sum="Sourced kg"/>
+                <field name="loss_averted_kg" sum="Loss averted kg"/>
+                <field name="active_outgrowers"/>
+                <field name="women_outgrower_pct"/>
+                <field name="payouts_total" sum="Paid"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_aifa_impact_report_form" model="ir.ui.view">
+        <field name="name">aifa.impact.report.form</field>
+        <field name="model">aifa.impact.report</field>
+        <field name="arch" type="xml">
+            <form string="ESG Impact Report">
+                <header>
+                    <button name="action_compute" type="object" string="Compute from Records"
+                            class="btn-primary" invisible="state == 'submitted'"/>
+                    <button name="action_submit" type="object" string="Mark Submitted"
+                            invisible="state != 'computed'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="donor"/>
+                            <field name="period_start"/>
+                            <field name="period_end"/>
+                            <field name="prepared_by_id"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Post-Harvest Loss" name="loss">
+                            <group>
+                                <group>
+                                    <field name="fruit_sourced_kg"/>
+                                    <field name="fruit_rejected_kg"/>
+                                    <field name="loss_averted_kg" class="fw-bold"/>
+                                </group>
+                            </group>
+                            <separator string="How the figure was derived"/>
+                            <field name="loss_averted_note" readonly="1"/>
+                            <div class="text-muted small mt-2">
+                                The counterfactual loss rate per crop and region, and its
+                                citation, live in Configuration &#8594; Master Data &#8594;
+                                Impact Assumptions. Change the assumption there rather than
+                                editing the number here, so the claim stays auditable.
+                            </div>
+                        </page>
+                        <page string="Livelihoods &amp; Gender" name="livelihoods">
+                            <group>
+                                <group>
+                                    <field name="active_outgrowers"/>
+                                    <field name="women_outgrowers"/>
+                                    <field name="women_outgrower_pct" widget="percentage"/>
+                                    <field name="cooperatives_engaged"/>
+                                </group>
+                                <group>
+                                    <field name="payouts_total"/>
+                                    <field name="payout_per_outgrower"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Circularity &amp; Energy" name="circularity">
+                            <group>
+                                <group>
+                                    <field name="scrap_total_kg"/>
+                                    <field name="scrap_valorised_kg"/>
+                                    <field name="scrap_valorised_pct" widget="percentage"/>
+                                </group>
+                                <group>
+                                    <field name="dried_output_kg"/>
+                                    <field name="energy_kwh"/>
+                                    <field name="energy_per_kg"/>
+                                    <field name="solar_share_pct" widget="percentage"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Narrative" name="narrative">
+                            <field name="narrative"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_aifa_impact_report" model="ir.actions.act_window">
+        <field name="name">ESG Impact Reports</field>
+        <field name="res_model">aifa.impact.report</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="view_aifa_impact_assumption_tree" model="ir.ui.view">
+        <field name="name">aifa.impact.assumption.tree</field>
+        <field name="model">aifa.impact.assumption</field>
+        <field name="arch" type="xml">
+            <tree string="Impact Assumptions" editable="bottom">
+                <field name="crop_id"/>
+                <field name="region_id"/>
+                <field name="loss_rate_pct"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="source"/>
+                <field name="currency_id" column_invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_aifa_impact_assumption" model="ir.actions.act_window">
+        <field name="name">Impact Assumptions</field>
+        <field name="res_model">aifa.impact.assumption</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

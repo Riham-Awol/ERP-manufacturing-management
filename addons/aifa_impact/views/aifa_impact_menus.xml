@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_aifa_kpi" name="Daily Plant KPIs"
+              parent="aifa_base.menu_aifa_reporting" action="action_aifa_kpi" sequence="10"/>
+    <menuitem id="menu_aifa_impact_report" name="ESG Impact Reports"
+              parent="aifa_base.menu_aifa_reporting"
+              action="action_aifa_impact_report" sequence="30"/>
+    <menuitem id="menu_aifa_impact_assumption" name="Impact Assumptions"
+              parent="aifa_base.menu_aifa_config_master"
+              action="action_aifa_impact_assumption" sequence="70"/>
+</odoo>

@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_kpi_user,aifa.daily.kpi user,model_aifa_daily_kpi,base.group_user,1,0,0,0
+access_kpi_manager,aifa.daily.kpi manager,model_aifa_daily_kpi,aifa_base.group_aifa_manager,1,1,1,1
+access_impact_assumption_user,aifa.impact.assumption user,model_aifa_impact_assumption,base.group_user,1,0,0,0
+access_impact_assumption_manager,aifa.impact.assumption manager,model_aifa_impact_assumption,aifa_base.group_aifa_manager,1,1,1,1
+access_impact_report_user,aifa.impact.report user,model_aifa_impact_report,base.group_user,1,0,0,0
+access_impact_report_manager,aifa.impact.report manager,model_aifa_impact_report,aifa_base.group_aifa_manager,1,1,1,1

@@ -172,15 +172,17 @@
                        decoration-success="aifa_quality_state == 'released'"
                        decoration-danger="aifa_quality_state in ('quarantine','rejected')"/>
             </xpath>
-            <xpath expr="//header" position="inside">
-                <button name="action_release_quality" type="object" string="Release Quality Hold"
-                        class="btn-primary" groups="aifa_base.group_aifa_qa_manager"
-                        invisible="aifa_quality_state == 'released'"/>
-                <button name="action_quarantine_quality" type="object" string="Quarantine"
-                        class="btn-danger" groups="aifa_base.group_aifa_qa_manager"
-                        invisible="aifa_quality_state == 'quarantine'"/>
-                <button name="action_print_audit_dossier" type="object"
-                        string="Print Audit Dossier"/>
+            <xpath expr="//div[@name='button_box']" position="before">
+                <header>
+                    <button name="action_release_quality" type="object" string="Release Quality Hold"
+                            class="btn-primary" groups="aifa_base.group_aifa_qa_manager"
+                            invisible="aifa_quality_state == 'released'"/>
+                    <button name="action_quarantine_quality" type="object" string="Quarantine"
+                            class="btn-danger" groups="aifa_base.group_aifa_qa_manager"
+                            invisible="aifa_quality_state == 'quarantine'"/>
+                    <button name="action_print_audit_dossier" type="object"
+                            string="Print Audit Dossier"/>
+                </header>
             </xpath>
         </field>
     </record>

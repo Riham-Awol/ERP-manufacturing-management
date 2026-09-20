@@ -44,6 +44,7 @@
                             </tr>
                         </table>
 
+                        <t t-set="checks" t-value="lot.aifa_dossier_checks()"/>
                         <h4 class="mt-4">1. Quality control results</h4>
                         <table class="table table-sm o_main_table">
                             <thead>
@@ -55,8 +56,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr t-foreach="lot.aifa_check_ids.filtered(lambda c: c.state == 'done')"
-                                    t-as="check">
+                                <tr t-foreach="checks" t-as="check">
                                     <td><span t-field="check.date"/></td>
                                     <td><span t-field="check.control_point_id"/></td>
                                     <td><span t-field="check.point_type"/></td>
@@ -78,8 +78,9 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <p t-if="not lot.aifa_check_ids" class="text-muted">
-                            No quality check has been recorded against this lot.
+                        <p t-if="not checks" class="text-muted">
+                            No quality check has been recorded against this lot or its
+                            upstream intake and drying records.
                         </p>
 
                         <h4 class="mt-4">2. Farm-gate origin</h4>

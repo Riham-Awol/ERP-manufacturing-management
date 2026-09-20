@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_aifa_route_trip_tree" model="ir.ui.view">
+        <field name="name">aifa.route.trip.tree</field>
+        <field name="model">aifa.route.trip</field>
+        <field name="arch" type="xml">
+            <tree string="Route Trips" decoration-success="state == 'settled'">
+                <field name="date"/>
+                <field name="name"/>
+                <field name="driver_id"/>
+                <field name="zone"/>
+                <field name="vehicle_plate" optional="show"/>
+                <field name="stop_count"/>
+                <field name="delivered_units" sum="Delivered"/>
+                <field name="returned_units" sum="Returned"/>
+                <field name="cash_collected" sum="Collected"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="distance_km" optional="hide"/>
+                <field name="state" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_aifa_route_trip_form" model="ir.ui.view">
+        <field name="name">aifa.route.trip.form</field>
+        <field name="model">aifa.route.trip</field>
+        <field name="arch" type="xml">
+            <form string="Route Trip">
+                <header>
+                    <button name="action_load_van" type="object" string="Load Van"
+                            class="btn-primary" invisible="state != 'planned'"/>
+                    <button name="action_start" type="object" string="Start Route"
+                            class="btn-primary" invisible="state != 'loaded'"/>
+                    <button name="action_settle" type="object" string="Settle Van"
+                            class="btn-primary" invisible="state != 'running'"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('settled','cancel')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="planned,loaded,running,settled"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="driver_id"/>
+                            <field name="zone"/>
+                            <field name="vehicle_plate"/>
+                        </group>
+                        <group>
+                            <field name="odometer_start"/>
+                            <field name="odometer_end"/>
+                            <field name="distance_km"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <field name="stop_ids">
+                        <tree editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="partner_id"/>
+                            <field name="channel" optional="show"/>
+                            <field name="planned_time"/>
+                            <field name="arrival_time" optional="hide"/>
+                            <field name="delivered_units" sum="Delivered"/>
+                            <field name="returned_units" sum="Returned"/>
+                            <field name="payment_method"/>
+                            <field name="cash_collected" sum="Collected"/>
+                            <field name="currency_id" column_invisible="1"/>
+                            <field name="signature_name"/>
+                            <field name="shelf_count_id" optional="hide"/>
+                            <field name="state" widget="badge"/>
+                            <button name="action_mark_delivered" type="object"
+                                    icon="fa-check" title="Mark delivered"
+                                    invisible="state != 'planned'"/>
+                            <button name="action_mark_refused" type="object"
+                                    icon="fa-times" title="Refused"
+                                    invisible="state != 'planned'"/>
+                        </tree>
+                    </field>
+                    <group class="oe_subtotal_footer">
+                        <field name="delivered_units"/>
+                        <field name="returned_units"/>
+                        <field name="cash_collected"/>
+                    </group>
+                    <field name="settlement_note" placeholder="End-of-day reconciliation notes, discrepancies, cash handover reference..."/>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_aifa_route_trip" model="ir.actions.act_window">
+        <field name="name">Van Route Trips</field>
+        <field name="res_model">aifa.route.trip</field>
+        <field name="view_mode">tree,form,calendar</field>
+    </record>
+
+    <record id="view_aifa_route_trip_calendar" model="ir.ui.view">
+        <field name="name">aifa.route.trip.calendar</field>
+        <field name="model">aifa.route.trip</field>
+        <field name="arch" type="xml">
+            <calendar string="Routes" date_start="date" color="driver_id" mode="month">
+                <field name="driver_id"/>
+                <field name="zone"/>
+            </calendar>
+        </field>
+    </record>
+</odoo>

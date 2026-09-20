@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_aifa" model="ir.ui.view">
+        <field name="name">res.partner.form.aifa</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_consignments" type="object"
+                        class="oe_stat_button" icon="fa-shopping-basket"
+                        invisible="not aifa_is_consignment">
+                    <div class="o_stat_info">
+                        <field name="aifa_shelf_balance_units" class="o_stat_value"/>
+                        <span class="o_stat_text">On Shelf</span>
+                    </div>
+                </button>
+            </xpath>
+            <xpath expr="//page[@name='sales_purchases']//group" position="inside">
+                <group string="Aifa Distribution">
+                    <field name="aifa_channel"/>
+                    <field name="aifa_is_consignment"/>
+                    <field name="aifa_shelf_count_days" invisible="not aifa_is_consignment"/>
+                    <field name="aifa_consignment_location_id" readonly="1"
+                           invisible="not aifa_is_consignment"/>
+                    <field name="aifa_shelf_value" invisible="not aifa_is_consignment"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

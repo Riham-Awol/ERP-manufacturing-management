@@ -55,7 +55,7 @@ class AifaQualityCheck(models.Model):
 
     result = fields.Selection(
         [("pending", "Pending"), ("pass", "Pass"), ("fail", "Fail"), ("waived", "Waived")],
-        default="pending", compute="_compute_result", store=True, readonly=False,
+        compute="_compute_result", store=True, readonly=False,
         tracking=True, index=True,
     )
     deviation = fields.Float(compute="_compute_result", store=True, digits=(10, 3),
@@ -96,10 +96,20 @@ class AifaQualityCheck(models.Model):
     @api.depends("value_numeric", "value_bool", "value_option_id", "limit_min", "limit_max",
                  "control_point_id", "result_type")
     def _compute_result(self):
+        """Score the measurement against the control point's limits.
+
+        Every branch assigns both fields: a stored computed field that is left
+        unassigned on some path silently keeps a stale value, which on a food
+        safety gate would mean a failing batch reading as a pass.
+        """
         for check in self:
             point = check.control_point_id
-            if not point or check.result == "waived":
+            if not point:
+                check.result = "pending"
                 check.deviation = 0.0
+                continue
+            if check.result == "waived":
+                check.deviation = check.deviation or 0.0
                 continue
             deviation = 0.0
             if point.result_type == "numeric":
@@ -286,6 +296,26 @@ class StockLot(models.Model):
             "domain": [("lot_id", "=", self.id)],
             "context": {"default_lot_id": self.id},
         }
+
+    def aifa_dossier_checks(self):
+        """Every recorded check relevant to this lot, including upstream ones.
+
+        Release testing happens on the dried bulk lot and gate testing on the
+        farm-gate intake, so a dossier that only listed checks bound directly to
+        the finished pouch would truthfully report "none" for a fully tested
+        batch. The dossier must show the chain, not the last link.
+        """
+        self.ensure_one()
+        checks = self.aifa_check_ids
+        if self.aifa_origin_run_ids:
+            checks |= self.env["aifa.quality.check"].search([
+                ("dehydration_run_id", "in", self.aifa_origin_run_ids.ids)
+            ])
+        if self.aifa_origin_intake_ids:
+            checks |= self.env["aifa.quality.check"].search([
+                ("intake_batch_id", "in", self.aifa_origin_intake_ids.ids)
+            ])
+        return checks.filtered(lambda c: c.state == "done").sorted("date")
 
     def action_print_audit_dossier(self):
         return self.env.ref("aifa_quality.action_report_audit_dossier").report_action(self)

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="partner_friendship" model="res.partner">
+        <field name="name">Friendship Supermarket</field>
+        <field name="company_type">company</field>
+        <field name="city">Addis Ababa</field>
+        <field name="street">Bole Road</field>
+        <field name="aifa_channel">supermarket</field>
+        <field name="aifa_is_consignment" eval="True"/>
+        <field name="aifa_shelf_count_days">14</field>
+        <field name="customer_rank">1</field>
+    </record>
+    <record id="partner_bambis" model="res.partner">
+        <field name="name">Bambis Supermarket</field>
+        <field name="company_type">company</field>
+        <field name="city">Addis Ababa</field>
+        <field name="aifa_channel">supermarket</field>
+        <field name="aifa_is_consignment" eval="True"/>
+        <field name="aifa_shelf_count_days">14</field>
+        <field name="customer_rank">1</field>
+    </record>
+    <record id="partner_allmart" model="res.partner">
+        <field name="name">Allmart Supermarket</field>
+        <field name="company_type">company</field>
+        <field name="city">Addis Ababa</field>
+        <field name="aifa_channel">supermarket</field>
+        <field name="aifa_is_consignment" eval="True"/>
+        <field name="customer_rank">1</field>
+    </record>
+    <record id="partner_lomyad" model="res.partner">
+        <field name="name">Lomyad Supermarket</field>
+        <field name="company_type">company</field>
+        <field name="city">Addis Ababa</field>
+        <field name="aifa_channel">supermarket</field>
+        <field name="aifa_is_consignment" eval="True"/>
+        <field name="customer_rank">1</field>
+    </record>
+    <record id="partner_tomoca" model="res.partner">
+        <field name="name">Tomoca Coffee</field>
+        <field name="company_type">company</field>
+        <field name="city">Addis Ababa</field>
+        <field name="aifa_channel">cafe</field>
+        <field name="customer_rank">1</field>
+    </record>
+    <record id="partner_hyatt" model="res.partner">
+        <field name="name">Hyatt Regency Addis Ababa</field>
+        <field name="company_type">company</field>
+        <field name="city">Addis Ababa</field>
+        <field name="aifa_channel">hotel</field>
+        <field name="customer_rank">1</field>
+    </record>
+    <record id="partner_zmall" model="res.partner">
+        <field name="name">ZMall Delivery</field>
+        <field name="company_type">company</field>
+        <field name="city">Addis Ababa</field>
+        <field name="aifa_channel">ecommerce</field>
+        <field name="aifa_is_consignment" eval="True"/>
+        <field name="aifa_shelf_count_days">7</field>
+        <field name="customer_rank">1</field>
+    </record>
+    <record id="partner_export_dubai" model="res.partner">
+        <field name="name">Gulf Organic Trading FZE</field>
+        <field name="company_type">company</field>
+        <field name="city">Dubai</field>
+        <field name="aifa_channel">export</field>
+        <field name="customer_rank">1</field>
+    </record>
+
+    <record id="route_trip_demo" model="aifa.route.trip">
+        <field name="date" eval="(DateTime.today() - relativedelta(days=1)).strftime('%Y-%m-%d')"/>
+        <field name="zone">bole</field>
+        <field name="vehicle_plate">3-D90211 AA</field>
+        <field name="odometer_start">48210.0</field>
+        <field name="odometer_end">48273.0</field>
+    </record>
+    <record id="route_stop_1" model="aifa.route.stop">
+        <field name="trip_id" ref="route_trip_demo"/>
+        <field name="sequence">10</field>
+        <field name="partner_id" ref="partner_friendship"/>
+        <field name="planned_time">9.0</field>
+        <field name="payment_method">consignment</field>
+    </record>
+    <record id="route_stop_2" model="aifa.route.stop">
+        <field name="trip_id" ref="route_trip_demo"/>
+        <field name="sequence">20</field>
+        <field name="partner_id" ref="partner_tomoca"/>
+        <field name="planned_time">10.5</field>
+        <field name="payment_method">telebirr</field>
+    </record>
+    <record id="route_stop_3" model="aifa.route.stop">
+        <field name="trip_id" ref="route_trip_demo"/>
+        <field name="sequence">30</field>
+        <field name="partner_id" ref="partner_hyatt"/>
+        <field name="planned_time">12.0</field>
+        <field name="payment_method">credit</field>
+    </record>
+    <record id="route_stop_4" model="aifa.route.stop">
+        <field name="trip_id" ref="route_trip_demo"/>
+        <field name="sequence">40</field>
+        <field name="partner_id" ref="partner_bambis"/>
+        <field name="planned_time">14.0</field>
+        <field name="payment_method">consignment</field>
+    </record>
+
+</odoo>

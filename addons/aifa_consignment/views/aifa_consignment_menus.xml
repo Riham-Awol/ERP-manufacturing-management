@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_aifa_consignment" name="Consignment Placements"
+              parent="aifa_base.menu_aifa_distribution"
+              action="action_aifa_consignment" sequence="10"/>
+    <menuitem id="menu_aifa_shelf_count" name="Shelf Counts"
+              parent="aifa_base.menu_aifa_distribution"
+              action="action_aifa_shelf_count" sequence="20"/>
+    <menuitem id="menu_aifa_route_trip" name="Van Route Trips"
+              parent="aifa_base.menu_aifa_distribution"
+              action="action_aifa_route_trip" sequence="30"/>
+</odoo>

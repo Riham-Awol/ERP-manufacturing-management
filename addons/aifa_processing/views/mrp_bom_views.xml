@@ -6,18 +6,20 @@
         <field name="model">mrp.bom</field>
         <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='product_qty']" position="after">
+            <xpath expr="//field[@name='code']" position="after">
                 <field name="aifa_stage"/>
                 <field name="aifa_crop_id"/>
                 <field name="aifa_version"/>
                 <field name="aifa_expected_yield_pct"
                        invisible="not aifa_stage"/>
             </xpath>
-            <xpath expr="//header" position="inside">
-                <button name="action_approve_recipe" type="object"
-                        string="Approve Recipe Version"
-                        invisible="not aifa_stage"
-                        groups="aifa_base.group_aifa_qa_manager"/>
+            <xpath expr="//div[@name='button_box']" position="before">
+                <header>
+                    <button name="action_approve_recipe" type="object"
+                            string="Approve Recipe Version"
+                            invisible="not aifa_stage"
+                            groups="aifa_base.group_aifa_qa_manager"/>
+                </header>
             </xpath>
             <xpath expr="//notebook" position="inside">
                 <page string="Engineering Change" name="aifa_ecn" invisible="not aifa_stage">

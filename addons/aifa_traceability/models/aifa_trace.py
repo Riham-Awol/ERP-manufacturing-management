@@ -115,14 +115,25 @@ class StockLot(models.Model):
 
     # ------------------------------------------------------------------ downstream
     def aifa_downstream_moves(self):
-        """Every outgoing delivery line that shipped this lot or a descendant."""
+        """Every line that put this lot, or a descendant, beyond Aifa's own walls.
+
+        A plain ``usage = customer`` filter is not enough here: consigned stock
+        sits in an *internal* location that happens to be a supermarket shelf.
+        Missing it would make a recall report look clean while the product is
+        still on sale, which is the precise failure a recall exists to prevent.
+        """
         self.ensure_one()
         family = self | self._collect_descendants()
-        return self.env["stock.move.line"].search([
-            ("lot_id", "in", family.ids),
-            ("state", "=", "done"),
-            ("location_dest_id.usage", "in", ("customer", "supplier")),
-        ])
+        domain = [("lot_id", "in", family.ids), ("state", "=", "done")]
+        external = [("location_dest_id.usage", "in", ("customer", "supplier"))]
+        consignment_root = self.env.ref(
+            "aifa_consignment.stock_location_consignment_root", raise_if_not_found=False
+        )
+        if consignment_root:
+            external = ["|"] + external + [
+                ("location_dest_id", "child_of", consignment_root.id)
+            ]
+        return self.env["stock.move.line"].search(domain + external)
 
     def _collect_descendants(self, max_depth=8):
         self.ensure_one()
@@ -159,7 +170,7 @@ class StockLot(models.Model):
             "product": self.product_id.display_name,
             "released": self.aifa_quality_state == "released",
             "quality_state": self.aifa_quality_state,
-            "expiry": self.expiration_date,
+            "expiry": self.expiration_date.strftime("%d %B %Y") if self.expiration_date else "",
             "regions": sorted(set(intakes.mapped("region_id.name"))),
             "cooperatives": sorted(set(c for c in intakes.mapped("cooperative_id.name") if c)),
             "outgrower_count": len(intakes.mapped("farmer_id")),
@@ -178,10 +189,14 @@ class StockLot(models.Model):
                 "moisture_pct": run.moisture_out_pct,
                 "water_activity": run.water_activity,
             } for run in runs],
+            # Release checks are recorded against the dried bulk lot, not the
+            # finished pouch, so a consumer scanning a pouch would otherwise see
+            # an empty quality section. Walk the ancestors as well.
             "checks": [{
                 "point": check.control_point_id.name,
                 "result": check.result,
                 "value": check.value_numeric,
                 "unit": check.uom_label,
-            } for check in self.aifa_check_ids.filtered(lambda c: c.state == "done")],
+            } for check in (self | self.aifa_parent_lot_ids).mapped(
+                "aifa_check_ids").filtered(lambda c: c.state == "done")],
         }

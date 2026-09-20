@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="assumption_pineapple" model="aifa.impact.assumption">
+        <field name="crop_id" ref="aifa_base.crop_pineapple"/>
+        <field name="loss_rate_pct">30.0</field>
+        <field name="source">FAO post-harvest loss estimates for tropical fruit in sub-Saharan Africa (30-40% band); conservative lower bound used.</field>
+        <field name="date_start" eval="(DateTime.today() - relativedelta(years=1)).strftime('%Y-%m-%d')"/>
+    </record>
+    <record id="assumption_mango" model="aifa.impact.assumption">
+        <field name="crop_id" ref="aifa_base.crop_mango"/>
+        <field name="loss_rate_pct">35.0</field>
+        <field name="source">FAO / Ethiopian ATI estimates for mango, which peaks in a short window and spoils faster than pineapple.</field>
+        <field name="date_start" eval="(DateTime.today() - relativedelta(years=1)).strftime('%Y-%m-%d')"/>
+    </record>
+    <record id="assumption_tomato" model="aifa.impact.assumption">
+        <field name="crop_id" ref="aifa_base.crop_tomato"/>
+        <field name="loss_rate_pct">40.0</field>
+        <field name="source">Ethiopian ATI horticulture loss study; tomato is the most perishable of the three crops and the most prone to glut-season dumping.</field>
+        <field name="date_start" eval="(DateTime.today() - relativedelta(years=1)).strftime('%Y-%m-%d')"/>
+    </record>
+
+</odoo>

@@ -5,6 +5,7 @@
         <t t-call="web.frontend_layout">
             <t t-set="no_header" t-value="True"/>
             <t t-set="no_footer" t-value="True"/>
+            <t t-set="title">Aifa Foods - Trace your pack</t>
             <div class="container my-5" style="max-width: 760px;">
                 <div class="text-center mb-4">
                     <h1 class="mb-1">Aifa Foods</h1>

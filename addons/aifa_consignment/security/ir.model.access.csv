@@ -1,0 +1,19 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_consignment_sales,aifa.consignment sales,model_aifa_consignment,aifa_base.group_aifa_route_sales,1,1,1,0
+access_consignment_finance,aifa.consignment finance,model_aifa_consignment,aifa_base.group_aifa_finance,1,1,1,0
+access_consignment_warehouse,aifa.consignment warehouse,model_aifa_consignment,aifa_base.group_aifa_warehouse,1,1,0,0
+access_consignment_user,aifa.consignment user,model_aifa_consignment,base.group_user,1,0,0,0
+access_consignment_manager,aifa.consignment manager,model_aifa_consignment,aifa_base.group_aifa_manager,1,1,1,1
+access_shelfcount_sales,aifa.shelf.count sales,model_aifa_shelf_count,aifa_base.group_aifa_route_sales,1,1,1,0
+access_shelfcount_finance,aifa.shelf.count finance,model_aifa_shelf_count,aifa_base.group_aifa_finance,1,1,1,0
+access_shelfcount_user,aifa.shelf.count user,model_aifa_shelf_count,base.group_user,1,0,0,0
+access_shelfcount_manager,aifa.shelf.count manager,model_aifa_shelf_count,aifa_base.group_aifa_manager,1,1,1,1
+access_shelfcountline_sales,aifa.shelf.count.line sales,model_aifa_shelf_count_line,aifa_base.group_aifa_route_sales,1,1,1,1
+access_shelfcountline_finance,aifa.shelf.count.line finance,model_aifa_shelf_count_line,aifa_base.group_aifa_finance,1,1,1,1
+access_shelfcountline_user,aifa.shelf.count.line user,model_aifa_shelf_count_line,base.group_user,1,0,0,0
+access_route_sales,aifa.route.trip sales,model_aifa_route_trip,aifa_base.group_aifa_route_sales,1,1,1,0
+access_route_user,aifa.route.trip user,model_aifa_route_trip,base.group_user,1,0,0,0
+access_route_manager,aifa.route.trip manager,model_aifa_route_trip,aifa_base.group_aifa_manager,1,1,1,1
+access_routestop_sales,aifa.route.stop sales,model_aifa_route_stop,aifa_base.group_aifa_route_sales,1,1,1,1
+access_routestop_user,aifa.route.stop user,model_aifa_route_stop,base.group_user,1,0,0,0
+access_routestop_manager,aifa.route.stop manager,model_aifa_route_stop,aifa_base.group_aifa_manager,1,1,1,1
