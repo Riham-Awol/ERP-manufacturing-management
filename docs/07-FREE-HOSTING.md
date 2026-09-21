@@ -272,7 +272,27 @@ evening debugging an OOM instead of preparing the demo.
 
 ---
 
-## 6. Cost if you ever outgrow free
+## 6. The Vercel half
+
+Odoo cannot run on Vercel, but the *client-facing* page can, and it is free
+there permanently — no sleeping, no hours to watch.
+
+`site/` is a Next.js page carrying the proposal, the corrected yield analysis
+and a live traceability lookup. Import the repository at vercel.com with
+**Root Directory = `site`** (leave it at `/` and you get the 404 that started
+all this, because the repository root is a Python project with no front end).
+
+Set `ODOO_BASE_URL` in the Vercel project settings to point it at your Odoo —
+Codespace or Oracle VM — and the lookup switches from bundled sample data to
+live. With no backend reachable it degrades to the sample rather than breaking,
+so the page is never dead in front of a client.
+
+That gives the split most teams end up with anyway: a fast public page on a CDN,
+the stateful ERP on a machine that can hold a database.
+
+---
+
+## 7. Cost if you ever outgrow free
 
 For context, since the proposal quotes 290,000 ETB/year for managed hosting and
 support:

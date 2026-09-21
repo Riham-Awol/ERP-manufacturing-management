@@ -37,11 +37,15 @@ Getting `Internal Server Error`? Run `./logs.sh` for the real traceback, or
 `./demo-up.sh --fresh` to rebuild from scratch. See
 [`docs/06-HOSTING-AND-TESTING.md`](docs/06-HOSTING-AND-TESTING.md) section 6.
 
-> **This will not deploy to Vercel, Netlify or any static/serverless host** —
-> they give `404 NOT_FOUND` because there is no front end to build. Odoo is a
-> long-running Python server with a PostgreSQL database and a filestore on
-> disk. It needs a VPS or a container platform. See
+> **Odoo itself will not deploy to Vercel, Netlify or any static/serverless
+> host** — they give `404 NOT_FOUND` because there is no front end to build.
+> Odoo is a long-running Python server with a PostgreSQL database and a
+> filestore on disk. It needs a VPS or a container platform. See
 > [`docs/06-HOSTING-AND-TESTING.md`](docs/06-HOSTING-AND-TESTING.md) section 0.
+>
+> What *does* belong on Vercel is [`site/`](site/) — a Next.js client pitch page
+> that presents the proposal and proxies the traceability lookup to a live Odoo
+> when one is configured. Import the repo with **Root Directory = `site`**.
 
 <details>
 <summary>The same thing step by step</summary>
@@ -92,6 +96,7 @@ Hosting it for a client demo, with TLS: **[`docs/06-HOSTING-AND-TESTING.md`](doc
 | [`docs/05-MODULE-REFERENCE.md`](docs/05-MODULE-REFERENCE.md) | Models, key fields, REST endpoints, extension points |
 | [`docs/06-HOSTING-AND-TESTING.md`](docs/06-HOSTING-AND-TESTING.md) | Running it locally, hosting it with TLS, the smoke test, and troubleshooting |
 | [`docs/07-FREE-HOSTING.md`](docs/07-FREE-HOSTING.md) | Hosting it for free: measured requirements, GitHub Codespaces and Oracle Always Free, step by step |
+| [`site/README.md`](site/README.md) | The Vercel pitch site: deploying it, and how it connects to a live Odoo |
 
 ---
 

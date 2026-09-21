@@ -1,0 +1,17 @@
+{
+  "name": "aifa-erp-pitch",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Client-facing proposal site for the Aifa Foods agro-processing ERP",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "16.3.5",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
+  }
+}
