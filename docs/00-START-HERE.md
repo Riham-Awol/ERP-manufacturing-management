@@ -16,6 +16,51 @@ You do not need both. Pick by what the meeting needs:
 
 ---
 
+## Where the functionality actually lives
+
+The Vercel page is a **pitch page**. It carries the argument &mdash; the yield
+finding, the module list, the scope limits &mdash; plus one working lookup. It is
+not the ERP, and it cannot be: everything below needs a database and a
+long-running server.
+
+If you deployed only to Vercel, this is why there is nothing to click into.
+
+| What you want to show | Where it is | How to reach it |
+|---|---|---|
+| Farm-gate intake, lot numbering, grading | Odoo | Aifa Agro &rarr; Sourcing &rarr; Raw Intake Batches |
+| Outgrower registry, plots, payouts | Odoo | Aifa Agro &rarr; Sourcing |
+| Prep logs, the mass-balance guard | Odoo | Aifa Agro &rarr; Processing &rarr; Prep Logs |
+| Dehydration runs, yield variance, kWh | Odoo | Aifa Agro &rarr; Processing &rarr; Dehydration Runs |
+| Quarantine that blocks stock, NCRs, check-weighing | Odoo | Aifa Agro &rarr; Quality |
+| Lot genealogy, recall drills | Odoo | Aifa Agro &rarr; Traceability |
+| Consignment, shelf counts, van routes | Odoo | Aifa Agro &rarr; Distribution |
+| KPI snapshots, ESG impact | Odoo | Aifa Agro &rarr; Reporting |
+| Audit dossier and crate label PDFs | Odoo | Print buttons on a lot / intake batch |
+| **Public provenance lookup** | **Both** | The Vercel page, or Odoo at `/trace/<lot>` |
+
+So: deploy the page for the argument, run Odoo for the demonstration. Section B
+takes about twenty minutes.
+
+### Is the page wired to the ERP?
+
+```
+https://<your-project>.vercel.app/api/status
+```
+
+Tells you plainly whether the backend is configured and reachable, without
+revealing the backend address:
+
+```json
+{ "connected": true, "host": "…app.github.dev", "latencyMs": 56,
+  "traceSource": "live", "hint": "Trace lookups go to the live ERP." }
+```
+
+`"connected": false` comes with the reason &mdash; not set, unreachable, or timed
+out &mdash; and the usual cause, which is a stopped Codespace or its port
+visibility having reset to private.
+
+---
+
 ## A. The pitch page on Vercel (10 minutes, permanent)
 
 This is the one that stays up forever for free.

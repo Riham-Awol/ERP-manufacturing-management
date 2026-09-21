@@ -71,6 +71,21 @@ the browser bundle.
 
 ---
 
+## Checking the wiring
+
+`GET /api/status` reports whether a live ERP is configured and reachable. It is
+for whoever sets the demo up, and it never echoes the backend URL &mdash; the host
+is confirmation enough.
+
+```bash
+curl https://<project>.vercel.app/api/status
+```
+
+Verified in all three states: no `ODOO_BASE_URL` set, set but unreachable, and
+connected to a running Odoo.
+
+---
+
 ## How the trace lookup behaves
 
 `app/api/trace/[lot]/route.js` is the only dynamic route. Three paths, all
