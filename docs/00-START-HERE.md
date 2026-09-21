@@ -25,7 +25,15 @@ This is the one that stays up forever for free.
 3. **Set Root Directory to `site`.** ← the important step. The repository root
    is a Python project; leave the root at `/` and Vercel finds nothing to build
    and serves `404 NOT_FOUND`.
-4. Framework preset is detected as Next.js. Click **Deploy**.
+4. **Framework Preset must be `Next.js`**, not "Other". `site/vercel.json`
+   pins this for a fresh import; on a project created earlier, set it in
+   **Settings → General**.
+5. Click **Deploy**.
+
+> **`No Output Directory named "public" found`** means the build succeeded but
+> the preset is "Other", so Vercel went looking for a static folder Next.js
+> never creates. Set the preset to Next.js, clear any Output Directory
+> override under Build & Output Settings, and redeploy.
 
 You get `https://<project>.vercel.app`. The traceability lookup works
 immediately using a bundled sample — the real payload from a seeded run — so

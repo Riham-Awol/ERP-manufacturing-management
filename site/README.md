@@ -20,8 +20,29 @@ real system hosted on a VM or a Codespace.
 2. **Root Directory → `site`.** This matters. The repository root is a Python
    Odoo project; if you leave the root at `/`, Vercel finds no front end and the
    deployment 404s.
-3. Framework preset: Next.js (detected automatically).
+3. **Framework Preset must be `Next.js`.** `vercel.json` in this folder pins
+   it, so a fresh import gets it right. If the project was created before that
+   existed, set it by hand in **Settings → General → Framework Preset** and
+   redeploy.
 4. Deploy. First build takes about a minute.
+
+### If the build succeeds but the deploy fails
+
+```
+Error: No Output Directory named "public" found after the Build completed.
+```
+
+The build worked &mdash; you will see Next's route table just above this line. The
+failure is afterwards: Vercel is treating the project as a plain static site,
+so it looks for a `public/` folder that a Next.js app does not produce.
+
+Fix it in **Settings → General**:
+
+1. **Framework Preset → `Next.js`** (not "Other").
+2. Under **Build & Output Settings**, make sure the **Output Directory**
+   override is switched off. Next.js does not use one; if something set it to
+   `public`, clear it.
+3. **Deployments → ⋯ → Redeploy.**
 
 ### Through the CLI
 
