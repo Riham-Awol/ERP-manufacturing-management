@@ -89,6 +89,7 @@ Hosting it for a client demo, with TLS: **[`docs/06-HOSTING-AND-TESTING.md`](doc
 
 | Document | What it is for |
 |---|---|
+| [`docs/00-START-HERE.md`](docs/00-START-HERE.md) | **Hosting it and showing a client** — the two things to deploy, where each goes, and a demo-day checklist |
 | [`docs/01-WORKFLOW-BLUEPRINT.md`](docs/01-WORKFLOW-BLUEPRINT.md) | **Start here.** The proposed farm-to-shelf process, every assumption tagged by source, and twelve questions Phase 1 must answer |
 | [`docs/02-PROPOSAL.md`](docs/02-PROPOSAL.md) | Proposal v3.0 — what was built, corrections to v2.4, what is *not* deliverable as specified, plan and commercials |
 | [`docs/03-FRS-COVERAGE.md`](docs/03-FRS-COVERAGE.md) | Every v2.4 functional requirement mapped to built / partial / core Odoo / not built |

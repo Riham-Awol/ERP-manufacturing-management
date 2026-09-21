@@ -53,31 +53,32 @@ done
     || fail "Postgres never came up. Check: docker compose logs db"
 
 say "Waiting for Odoo to answer on 8069"
+PROBE="import urllib.request as u; print(u.urlopen('http://localhost:8069/web/login', timeout=3).status)"
 for _ in $(seq 1 60); do
-    code=$("${COMPOSE[@]}" exec -T odoo \
-        python3 -c "import urllib.request;\
-print(urllib.request.urlopen('http://localhost:8069/web/login', timeout=3).status)" \
-        2>/dev/null || true)
-    if [ -n "$code" ]; then
+    if code=$("${COMPOSE[@]}" exec -T odoo python3 -c "$PROBE" 2>/dev/null) && [ -n "$code" ]; then
         echo "  Odoo responded ($code)"
         break
     fi
     sleep 2
 done
 
-if "${COMPOSE[@]}" exec -T odoo python3 - "$DB" <<'PY' 2>/dev/null
-import sys, odoo
-from odoo.tools import config
-config.parse_config([])
-sys.exit(0 if odoo.service.db.exp_db_exist(sys.argv[1]) else 1)
-PY
-then
-    say "Database '$DB' already exists - skipping creation"
-else
-    say "Creating database '$DB' with Ethiopia as the country (currency ETB)"
-    "${COMPOSE[@]}" exec -T odoo python3 /mnt/aifa-tools/create_db.py "$DB" \
-        || fail "database creation failed"
-fi
+EXISTS="import sys, odoo; from odoo.tools import config; config.parse_config([]); \
+print('yes' if odoo.service.db.exp_db_exist(sys.argv[1]) else 'no')"
+db_state=$("${COMPOSE[@]}" exec -T odoo python3 -c "$EXISTS" "$DB" 2>/dev/null | tr -d '\r' | tail -1)
+
+case "$db_state" in
+    yes)
+        say "Database '$DB' already exists - skipping creation"
+        ;;
+    no|"")
+        say "Creating database '$DB' with Ethiopia as the country (currency ETB)"
+        "${COMPOSE[@]}" exec -T odoo python3 /mnt/aifa-tools/create_db.py "$DB" \
+            || fail "database creation failed. Full error: docker compose logs odoo"
+        ;;
+    *)
+        fail "could not tell whether '$DB' exists (got: $db_state)"
+        ;;
+esac
 
 say "Installing the seven Aifa modules (this takes a few minutes)"
 "${COMPOSE[@]}" exec -T odoo odoo -d "$DB" \
